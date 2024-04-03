@@ -1,0 +1,23 @@
+#!/bin/sh
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+hint=$(cat "$COMMIT_MSG_FILE")
+
+is_interactive_commit() {
+    [ -z "$COMMIT_SOURCE" ] || [ "$COMMIT_SOURCE" = "message" ]
+}
+
+is_rysk_ticket() {
+    echo "$hint" | grep '^RYSK-[0-9][0-9]*' > /dev/null 2>&1
+}
+
+branch_is_not_head() {
+    branch_name=$(git rev-parse --abbrev-ref HEAD)
+    [ "$branch_name" != "HEAD" ]
+}
+
+if is_interactive_commit && branch_is_not_head && ! is_rysk_ticket
+then
+    echo "${branch_name}: ${hint}" > "$COMMIT_MSG_FILE"
+fi

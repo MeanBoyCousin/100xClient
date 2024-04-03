@@ -1,0 +1,90 @@
+{
+  "extends": [
+    "prettier",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
+  ],
+  "ignorePatterns": [
+    ".eslintrc.json",
+    "package.json"
+  ],
+  "plugins": ["unused-imports", "@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
+  "root": true,
+  "rules": {
+    "@typescript-eslint/array-type": ["error"],
+    "@typescript-eslint/consistent-type-definitions": "error",
+    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/no-unused-vars": "off",
+    "comma-dangle": ["error", "always-multiline"],
+    "camelcase": [
+      "error",
+      {
+        "properties": "never"
+      }
+    ],
+    "function-paren-newline": "off",
+    "import/exports-last": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-mutable-exports": "error",
+    "import/no-unused-modules": "error",
+    "import/no-useless-path-segments": "error",
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "type",
+          "builtin",
+          "external",
+          "internal",
+          ["parent", "sibling"],
+          "index",
+          "object"
+        ],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
+    "linebreak-style": "off",
+    "newline-per-chained-call": "off",
+    "no-console": [
+      "error",
+      {
+        "allow": ["debug", "error"]
+      }
+    ],
+    "no-extra-parens": "off",
+    "no-underscore-dangle": "off",
+    "nonblock-statement-body-position": "error",
+    "prefer-named-capture-group": "off",
+    "require-await": "error",
+    "require-unicode-regexp": "off",
+    "no-inline-comments": "error",
+    "curly": ["error", "multi-line", "consistent"],
+    "brace-style": "error",
+    "func-style": ["error", "expression"],
+    "prefer-arrow-callback": [
+      "error",
+      {
+        "allowNamedFunctions": true
+      }
+    ],
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": "error"
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "**/tsconfig.json"
+      }
+    }
+  }
+}
