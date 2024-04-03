@@ -1,0 +1,40 @@
+{
+  "name": "100x-client",
+  "version": "0.0.0",
+  "description": "A TypesScript client for the 100x exchange API.",
+  "keywords": [
+    "100x",
+    "exchange",
+    "crypto",
+    "cryptocurrency",
+    "api",
+    "rest",
+    "websocket",
+    "trading"
+  ],
+  "license": "MIT",
+  "author": "Tim Dunphy",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node -e \"process.exit(process.env.VERCEL_ENV == 'production' ? 0 : 1)\" || husky",
+    "lint": "eslint src/*",
+    "upgrade": "yarn upgrade-interactive --latest"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.5.0",
+    "@typescript-eslint/parser": "^7.5.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-unused-imports": "^3.1.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "markdownlint-cli": "^0.39.0",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3",
+    "typescript-eslint": "^7.5.0"
+  }
+}
