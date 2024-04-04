@@ -2,5 +2,5 @@
 *.sh
 *.md
 
-dist
+lib
 package.json

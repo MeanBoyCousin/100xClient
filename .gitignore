@@ -5,7 +5,9 @@
 /coverage/
 
 # Build files
-/dist
+/lib
+.tsup
+/src/sandbox.ts
 
 # debug
 yarn-debug.log*
@@ -17,4 +19,4 @@ yarn-error.log*
 
 # IDE
 .vscode
-
+*.txt

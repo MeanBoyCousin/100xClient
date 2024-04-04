@@ -15,10 +15,18 @@
   "license": "MIT",
   "author": "Tim Dunphy",
   "type": "module",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "module": "lib/index.mjs",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
   "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
     "postinstall": "node -e \"process.exit(process.env.VERCEL_ENV == 'production' ? 0 : 1)\" || husky",
-    "lint": "eslint src/*",
+    "lint": "eslint",
+    "sandbox": "tsx src/sandbox.ts",
     "upgrade": "yarn upgrade-interactive --latest"
   },
   "devDependencies": {
@@ -34,7 +42,9 @@
     "markdownlint-cli": "^0.39.0",
     "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
+    "tsup": "^8.0.2",
     "typescript": "^5.4.3",
-    "typescript-eslint": "^7.5.0"
+    "typescript-eslint": "^7.5.0",
+    "viem": "^2.9.8"
   }
 }
