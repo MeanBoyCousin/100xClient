@@ -1,7 +1,7 @@
 import type { Environment } from 'src/types'
 import type { Chain } from 'viem'
 
-const chains: Record<Environment, Chain> = {
+const CHAINS: Record<Environment, Chain> = {
   mainnet: {
     id: 81457,
     name: 'Blast',
@@ -16,4 +16,4 @@ const chains: Record<Environment, Chain> = {
   },
 }
 
-export default chains
+export default CHAINS
