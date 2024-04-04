@@ -2,9 +2,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import logger from '../logger'
 
-vi.spyOn(console, 'error').mockImplementation(() => {})
-vi.spyOn(console, 'log').mockImplementation(() => {})
-
 describe('The logger util function', () => {
   beforeEach(() => {
     vi.clearAllMocks()

@@ -13,6 +13,7 @@ HundredXClient {
   },
   "chain": 81457,
   "ciaoAddress": "0x0",
+  "deposit": [Function],
   "domain": {
     "chainId": 81457n,
     "name": "100x",
@@ -40,6 +41,7 @@ HundredXClient {
   },
   "chain": 168587773,
   "ciaoAddress": "0x63bD0ca355Cfc117F5176E5eF3e34A6D60081937",
+  "deposit": [Function],
   "domain": {
     "chainId": 168587773n,
     "name": "100x",
@@ -67,6 +69,7 @@ HundredXClient {
   },
   "chain": 168587773,
   "ciaoAddress": "0x63bD0ca355Cfc117F5176E5eF3e34A6D60081937",
+  "deposit": [Function],
   "domain": {
     "chainId": 168587773n,
     "name": "100x",
