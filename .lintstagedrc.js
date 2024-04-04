@@ -1,9 +1,10 @@
 import { relative } from 'path'
 
 const buildEslintCommand = filenames => {
-  return `yarn lint --file ${filenames
-    .map(filename => relative(process.cwd(), filename))
-    .join(' --file ')} --fix`
+  console.log(
+    `yarn lint ${filenames.map(filename => relative(process.cwd(), filename)).join(' ')} --fix`,
+  )
+  return `yarn lint ${filenames.map(filename => relative(process.cwd(), filename)).join(' ')} --fix`
 }
 
 export default {
