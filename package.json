@@ -1,6 +1,7 @@
 {
   "name": "100x-client",
   "version": "1.0.0",
+  "private": true,
   "description": "A TypesScript client for the 100x exchange API.",
   "keywords": [
     "100x",
@@ -12,6 +13,7 @@
     "websocket",
     "trading"
   ],
+  "repository": "https://github.com/MeanBoyCousin/100xClient.git",
   "license": "MIT",
   "author": "Tim Dunphy",
   "type": "module",
@@ -26,12 +28,15 @@
     "dev": "tsup --watch",
     "postinstall": "node -e \"process.exit(process.env.VERCEL_ENV == 'production' ? 0 : 1)\" || husky",
     "lint": "eslint",
+    "test:mutations": "stryker run",
     "sandbox": "tsx src/sandbox.ts",
     "test": "vitest -c vitest/vitest.config",
     "test:cov": "yarn test --coverage --silent",
     "upgrade": "yarn upgrade-interactive --latest"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "^8.2.6",
+    "@stryker-mutator/vitest-runner": "^8.2.6",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
     "@vitest/coverage-v8": "^1.4.0",
