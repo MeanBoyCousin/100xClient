@@ -10,17 +10,17 @@ import CIAO_ADDRESS from './constants/ciao'
 import VERIFIER_ADDRESS from './constants/verifier'
 
 class HundredXClient {
-  account: PrivateKeyAccount
-  chain: number
-  ciaoAddress: HexString
-  domain: EIP712Domain
-  environment: Environment
-  privateKey: HexString
-  #publicClient: PublicClient
-  rpc: string
-  subAccountId: number
-  verifierAddress: HexString
-  #walletClient: WalletClient
+  readonly account: PrivateKeyAccount
+  readonly chain: number
+  readonly ciaoAddress: HexString
+  readonly domain: EIP712Domain
+  readonly environment: Environment
+  readonly privateKey: HexString
+  readonly #publicClient: PublicClient
+  readonly rpc: string
+  readonly subAccountId: number
+  readonly verifierAddress: HexString
+  readonly #walletClient: WalletClient
 
   constructor(
     privateKey: HexString,
