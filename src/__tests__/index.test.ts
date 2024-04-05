@@ -6,7 +6,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import CIAO from 'src/ABI/CIAO'
 import CHAINS from 'src/constants/chains'
-import logger from 'src/utils/logger'
 
 import HundredXClient from '..'
 
@@ -53,8 +52,6 @@ vi.mock('viem', async () => {
   }
 })
 
-vi.mock('src/utils/logger')
-
 describe('The HundredXClient', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
@@ -68,9 +65,13 @@ describe('The HundredXClient', () => {
   })
 
   it.each(['mainnet', 'testnet'] as [Environment, Environment])(
-    'should initialise correctly with all parameters passed for a %s setup',
+    'should initialise correctly with all config parameters passed for a %s setup',
     environment => {
-      const Client = new HundredXClient(privateKey, 2, environment, 'https://test-rpc.quiknode.pro')
+      const Client = new HundredXClient(privateKey, 2, {
+        debug: true,
+        environment,
+        rpc: 'https://test-rpc.quiknode.pro',
+      })
 
       expect(Client).toMatchSnapshot()
     },
@@ -84,7 +85,7 @@ describe('The HundredXClient', () => {
 
     const Client = new HundredXClient(privateKey)
 
-    Client.deposit(100)
+    const result = await Client.deposit(100)
 
     await vi.runOnlyPendingTimersAsync()
 
@@ -114,6 +115,23 @@ describe('The HundredXClient', () => {
       }),
     )
     expect(mocks.createWalletClient.writeContract).toHaveBeenNthCalledWith(2, true)
+    expect(result).toEqual({ success: true, transactionHash: '0x1234546' })
+    expect(Client.logs).toMatchInlineSnapshot(`
+      [
+        {
+          "msg": "Depositing 100 USDB...",
+        },
+        {
+          "msg": "Waiting for approval confirmation...",
+        },
+        {
+          "msg": "Waiting for deposit confirmation...",
+        },
+        {
+          "msg": "Deposit completed!",
+        },
+      ]
+    `)
   })
 
   it('should allow a user to deposit funds with sufficient existing approval', async () => {
@@ -124,7 +142,7 @@ describe('The HundredXClient', () => {
 
     const Client = new HundredXClient(privateKey)
 
-    Client.deposit(100)
+    const result = await Client.deposit(100)
 
     await vi.runOnlyPendingTimersAsync()
 
@@ -136,9 +154,10 @@ describe('The HundredXClient', () => {
       }),
     )
     expect(mocks.createWalletClient.writeContract).toHaveBeenCalledOnce()
+    expect(result).toEqual({ success: true, transactionHash: '0x1234546' })
   })
 
-  it('should surface errors to the user when a deposit fails', async () => {
+  it('should surface errors to the user when they are of a known type', async () => {
     mocks.createPublicClient.readContract.mockReturnValue(BigInt(1000e18))
     mocks.createPublicClient.simulateContract.mockRejectedValue(
       new BaseError('This is the short message.', {
@@ -152,14 +171,37 @@ describe('The HundredXClient', () => {
 
     const Client = new HundredXClient(privateKey)
 
-    Client.deposit(100)
+    const result = await Client.deposit(100)
 
     await vi.runOnlyPendingTimersAsync()
 
     expect(mocks.createWalletClient.writeContract).not.toHaveBeenCalled()
-    expect(logger.failure).toHaveBeenCalledWith(
-      'The contract function "deposit" reverted. Reason: DepositQuantityInvalid.',
+    expect(result).toEqual({
+      error: {
+        errorName: 'DepositQuantityInvalid',
+        message: "The contract function 'deposit' reverted.",
+      },
+      success: false,
+    })
+  })
+
+  it('should surface errors to the user when they are unknown', async () => {
+    mocks.createPublicClient.readContract.mockReturnValue(BigInt(1000e18))
+    mocks.createPublicClient.simulateContract.mockRejectedValue(
+      new Error('An unknown error occurred.'),
     )
+
+    const Client = new HundredXClient(privateKey)
+
+    const result = await Client.deposit(100)
+
+    await vi.runOnlyPendingTimersAsync()
+
+    expect(mocks.createWalletClient.writeContract).not.toHaveBeenCalled()
+    expect(result).toEqual({
+      error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+      success: false,
+    })
   })
 
   it('should recursively check for transaction receipts if there is an error', async () => {
@@ -178,8 +220,21 @@ describe('The HundredXClient', () => {
 
     mocks.createPublicClient.getTransactionReceipt.mockReturnValue({ status: 'success' })
 
-    await vi.advanceTimersByTimeAsync(1000)
+    await vi.advanceTimersByTimeAsync(5000)
 
     expect(mocks.createPublicClient.getTransactionReceipt).toHaveReturnedWith({ status: 'success' })
+    expect(Client.logs).toMatchInlineSnapshot(`
+      [
+        {
+          "msg": "Depositing 100 USDB...",
+        },
+        {
+          "msg": "Waiting for deposit confirmation...",
+        },
+        {
+          "msg": "Deposit completed!",
+        },
+      ]
+    `)
   })
 })
