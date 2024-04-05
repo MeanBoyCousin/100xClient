@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`The HundredXClient > should initialise correctly with all parameters passed for a mainnet setup 1`] = `
+exports[`The HundredXClient > should initialise correctly with all config parameters passed for a mainnet setup 1`] = `
 HundredXClient {
   "account": {
     "address": "0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8",
@@ -21,6 +21,11 @@ HundredXClient {
     "version": "0.0.0",
   },
   "environment": "mainnet",
+  "logs": [
+    {
+      "msg": "Debug mode enabled",
+    },
+  ],
   "privateKey": "0xa608cd43cbc3d59bc51443f475b96a4654e956d6cc91783598a8e76a34000174",
   "rpc": "https://test-rpc.quiknode.pro",
   "subAccountId": 2,
@@ -28,7 +33,7 @@ HundredXClient {
 }
 `;
 
-exports[`The HundredXClient > should initialise correctly with all parameters passed for a testnet setup 1`] = `
+exports[`The HundredXClient > should initialise correctly with all config parameters passed for a testnet setup 1`] = `
 HundredXClient {
   "account": {
     "address": "0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8",
@@ -49,6 +54,11 @@ HundredXClient {
     "version": "0.0.0",
   },
   "environment": "testnet",
+  "logs": [
+    {
+      "msg": "Debug mode enabled",
+    },
+  ],
   "privateKey": "0xa608cd43cbc3d59bc51443f475b96a4654e956d6cc91783598a8e76a34000174",
   "rpc": "https://test-rpc.quiknode.pro",
   "subAccountId": 2,
@@ -77,6 +87,7 @@ HundredXClient {
     "version": "0.0.0",
   },
   "environment": "testnet",
+  "logs": [],
   "privateKey": "0xa608cd43cbc3d59bc51443f475b96a4654e956d6cc91783598a8e76a34000174",
   "rpc": "https://sepolia.blast.io",
   "subAccountId": 1,
