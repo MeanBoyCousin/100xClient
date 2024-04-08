@@ -1,23 +1,12 @@
-import type { Environment } from 'src/types'
-
 import { BaseError, ContractFunctionRevertedError, http } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import HundredXClient from 'src'
 import CIAO from 'src/ABI/CIAO'
 import CHAINS from 'src/constants/chains'
+import { USDB, address, ciaoAddress, privateKey } from 'vitest/utils'
 
-import HundredXClient from '..'
-
-// User variables.
-const address = '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8'
-const privateKey = '0xa608cd43cbc3d59bc51443f475b96a4654e956d6cc91783598a8e76a34000174'
-
-// Contract addresses
-const ciaoAddress = '0x63bD0ca355Cfc117F5176E5eF3e34A6D60081937'
-const USDB = '0x79a59c326c715ac2d31c169c85d1232319e341ce'
-
-// Mocks
 const mocks = vi.hoisted(() => ({
   createPublicClient: {
     getTransactionReceipt: vi.fn(),
@@ -52,30 +41,11 @@ vi.mock('viem', async () => {
   }
 })
 
-describe('The HundredXClient', () => {
+describe('The HundredXClient deposit function', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
     vi.useFakeTimers({ shouldAdvanceTime: true })
   })
-
-  it('should initialise correctly with only required params', () => {
-    const Client = new HundredXClient(privateKey)
-
-    expect(Client).toMatchSnapshot()
-  })
-
-  it.each(['mainnet', 'testnet'] as [Environment, Environment])(
-    'should initialise correctly with all config parameters passed for a %s setup',
-    environment => {
-      const Client = new HundredXClient(privateKey, 2, {
-        debug: true,
-        environment,
-        rpc: 'https://test-rpc.quiknode.pro',
-      })
-
-      expect(Client).toMatchSnapshot()
-    },
-  )
 
   it('should allow a user to deposit funds with no previous approval', async () => {
     mocks.createPublicClient.readContract.mockReturnValue(BigInt(10e18))
