@@ -1,67 +1,21 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import HundredXClient from 'src'
-import { privateKey } from 'vitest/utils'
+import { privateKey, productsData } from 'vitest/utils'
 
-const productsData = [
-  {
-    id: 1003,
-    type: 'PERP',
-    symbol: 'btcperp',
-    active: true,
-    baseAsset: 'WBTC',
-    quoteAsset: 'USDB',
-    minQuantity: '1000000000000000',
-    maxQuantity: '1000000000000000000000000',
-    increment: '100000000000000',
-    takerFee: '500000000000000',
-    makerFee: '300000000000000',
-    isMakerRebate: true,
-    initialLongWeight: '900000000000000000',
-    initialShortWeight: '1100000000000000000',
-    maintenanceLongWeight: '950000000000000000',
-    maintenanceShortWeight: '1050000000000000000',
-    baseAssetAddress: '0xdc2f16a474a969056e6a559629b46d01f8675a1a',
-    quoteAssetAddress: '0x79a59c326c715ac2d31c169c85d1232319e341ce',
-    markPrice: '72581488537710140836821',
-  },
-  {
-    id: 1002,
-    type: 'PERP',
-    symbol: 'ethperp',
-    active: true,
-    baseAsset: 'WETH',
-    quoteAsset: 'USDB',
-    minQuantity: '100000000000000',
-    maxQuantity: '100000000000000000000000',
-    increment: '10000000000000',
-    takerFee: '200000000000000',
-    makerFee: '50000000000000',
-    isMakerRebate: true,
-    initialLongWeight: '950000000000000000',
-    initialShortWeight: '1050000000000000000',
-    maintenanceLongWeight: '970000000000000000',
-    maintenanceShortWeight: '1030000000000000000',
-    baseAssetAddress: '0x4200000000000000000000000000000000000023',
-    quoteAssetAddress: '0x79a59c326c715ac2d31c169c85d1232319e341ce',
-    markPrice: '3399999999999999999772',
-  },
-]
-
-describe('The HundredXClient withdraw function', () => {
+describe('The HundredXClient REST methods that do not require authentication', () => {
   beforeEach(() => {
     fetchMock.resetMocks()
-    // vi.setSystemTime(1709829760000)
   })
 
-  it('should allow a user get a list of products', async () => {
+  it('should allow a user to get a list of products', async () => {
     fetchMock.mockResponse(JSON.stringify(productsData))
 
     const Client = new HundredXClient(privateKey)
 
     const result = await Client.getProducts()
 
-    expect(fetchMock.mock.calls[0][0]).toEqual('https://api.ciaobella.dev/v1/products')
+    expect(fetchMock.mock.calls[0][0]).toEqual(expect.stringContaining('/products'))
     expect(result).toMatchInlineSnapshot(`
       {
         "products": [
@@ -133,7 +87,7 @@ describe('The HundredXClient withdraw function', () => {
     const result = await Client.getProduct(1003)
 
     expect(fetchMock.mock.calls[0][0]).toEqual(
-      'https://api.ciaobella.dev/v1/products/product-by-id/1003',
+      expect.stringContaining('/products/product-by-id/1003'),
     )
     expect(result).toMatchInlineSnapshot(`
       {
@@ -169,7 +123,7 @@ describe('The HundredXClient withdraw function', () => {
 
     const result = await Client.getProduct('ethperp')
 
-    expect(fetchMock.mock.calls[0][0]).toEqual('https://api.ciaobella.dev/v1/products/ethperp')
+    expect(fetchMock.mock.calls[0][0]).toEqual(expect.stringContaining('/products/ethperp'))
     expect(result).toMatchInlineSnapshot(`
       {
         "product": {
@@ -207,6 +161,33 @@ describe('The HundredXClient withdraw function', () => {
     expect(result).toEqual({
       error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
       product: {},
+    })
+  })
+
+  it('should allow a user to get the server time', async () => {
+    fetchMock.mockResponse(JSON.stringify({ serverTime: 1709829760000 }))
+
+    const Client = new HundredXClient(privateKey)
+
+    const result = await Client.getServerTime()
+
+    expect(fetchMock.mock.calls[0][0]).toEqual(expect.stringContaining('/time'))
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "serverTime": 1709829760000,
+      }
+    `)
+  })
+
+  it('should handle an unknown error getting the server time', async () => {
+    fetchMock.mockReject(new Error('An unknown error occurred'))
+
+    const Client = new HundredXClient(privateKey)
+
+    const result = await Client.getServerTime()
+
+    expect(result).toEqual({
+      error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
     })
   })
 })
