@@ -21,6 +21,8 @@ HundredXClient {
     "version": "0.0.0",
   },
   "environment": "mainnet",
+  "getProduct": [Function],
+  "getProducts": [Function],
   "logs": [
     {
       "msg": "Debug mode enabled",
@@ -55,6 +57,8 @@ HundredXClient {
     "version": "0.0.0",
   },
   "environment": "testnet",
+  "getProduct": [Function],
+  "getProducts": [Function],
   "logs": [
     {
       "msg": "Debug mode enabled",
@@ -89,6 +93,8 @@ HundredXClient {
     "version": "0.0.0",
   },
   "environment": "testnet",
+  "getProduct": [Function],
+  "getProducts": [Function],
   "logs": [],
   "privateKey": "0xa608cd43cbc3d59bc51443f475b96a4654e956d6cc91783598a8e76a34000174",
   "rpc": "https://sepolia.blast.io",

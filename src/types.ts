@@ -1,9 +1,4 @@
 // Config & common types
-interface BaseApiResponse {
-  error?: string
-  success: boolean
-}
-
 interface Config {
   debug?: boolean
   environment?: Environment
@@ -21,6 +16,36 @@ type Environment = 'mainnet' | 'testnet'
 
 type HexString = `0x${string}`
 
+// API response types
+interface BaseApiResponse {
+  error?: string
+  success: boolean
+}
+
+interface Product {
+  active: boolean
+  baseAsset: string
+  baseAssetAddress: HexString
+  increment: bigint
+  id: number
+  initialLongWeight: bigint
+  initialShortWeight: bigint
+  isMakerRebate: boolean
+  makerFee: bigint
+  maintenanceLongWeight: bigint
+  maintenanceShortWeight: bigint
+  markPrice: bigint
+  maxQuantity: bigint
+  minQuantity: bigint
+  quoteAsset: string
+  quoteAssetAddress: HexString
+  symbol: string
+  takerFee: bigint
+  type: string
+}
+type ProductResponse = Product
+type ProductsResponse = Product[]
+
 // Method return types
 interface ErrorReturnType {
   error?: {
@@ -34,6 +59,14 @@ interface DepositReturnType extends ErrorReturnType {
   transactionHash?: HexString
 }
 
+interface ProductReturnType extends ErrorReturnType {
+  product: ProductResponse | {}
+}
+
+interface ProductsReturnType extends ErrorReturnType {
+  products: ProductsResponse
+}
+
 interface WithdrawReturnType extends ErrorReturnType {
   success: boolean
 }
@@ -45,5 +78,9 @@ export {
   type EIP712Domain,
   type Environment,
   type HexString,
+  type ProductResponse,
+  type ProductReturnType,
+  type ProductsResponse,
+  type ProductsReturnType,
   type WithdrawReturnType,
 }
