@@ -53,6 +53,7 @@ class HundredXClient {
 
   /**
    * Creates a new instance of the 100x client.
+   * See {@link https://100x.readme.io/} for detailed documentation.
    *
    * @param {HexString} privateKey The private key used to sign transactions.
    * @param {number} [subAccountId=1] The sub-account ID to use. Defaults to 1.
@@ -249,6 +250,8 @@ class HundredXClient {
   /**
    * Deposits a specified quantity of an asset.
    *
+   * {@link https://100x.readme.io/reference/depositing}
+   *
    * @param {number} quantity The amount of the asset to deposit.
    * @param {MarginAssetKey} [asset='USDB'] The type of asset to deposit (default: USDB).
    * @returns {Promise<DepositReturnType>} A promise that resolves with an object containing the deposit status and transaction hash, or an error object.
@@ -331,6 +334,8 @@ class HundredXClient {
 
   /**
    * Withdraw a specified quantity of an asset.
+   *
+   * {@link https://100x.readme.io/reference/withdraw}
    *
    * @param {number} quantity The amount of the asset to withdraw.
    * @param {MarginAssetKey} [asset='USDB'] The type of asset to withdraw (default: USDB).
