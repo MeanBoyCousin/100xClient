@@ -1,6 +1,6 @@
 {
   "name": "100x-client",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "A TypesScript client for the 100x exchange API.",
   "keywords": [
