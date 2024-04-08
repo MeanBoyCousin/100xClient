@@ -1,5 +1,3 @@
-
-
 // User variables.
 export const address = '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8'
 export const privateKey = '0xa608cd43cbc3d59bc51443f475b96a4654e956d6cc91783598a8e76a34000174'
