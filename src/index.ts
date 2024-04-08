@@ -47,6 +47,28 @@ class HundredXClient {
   readonly verifierAddress: HexString
   readonly #walletClient: WalletClient
 
+  /**
+   * Creates a new instance of the 100x client.
+   *
+   * @param {HexString} privateKey The private key used to sign transactions.
+   * @param {number} [subAccountId=1] The sub-account ID to use. Defaults to 1.
+   * @param {Config} [config] Optional configuration options.
+   * @param {Config["debug"]} config.debug Enable debug mode.
+   * @param {Config["environment"]} config.environment The environment to use. Defaults to "testnet".
+   * @param {Config["rpc"]} config.rpc The RPC URL to use.
+   * @throws {Error} If the provided private key is invalid.
+   *
+   * @property {Account} account The Ethereum account derived from the provided private key.
+   * @property {number} chain The chain ID of the connected network.
+   * @property {string} ciaoAddress The address of the CIAO contract on the connected network.
+   * @property {Domain} domain The EIP-712 domain information used for transaction signing.
+   * @property {string} environment The name of the connected network environment.
+   * @property {Array<Object>} logs An array containing logged messages. This may be useful for debugging.
+   * @property {HexString} privateKey The provided private key.
+   * @property {string} rpc The RPC URL of the connected network.
+   * @property {number} subAccountId The configured sub-account ID.
+   * @property {string} verifierAddress The address of the verification contract on the connected network.
+   */
   constructor(privateKey: HexString, subAccountId: number = 1, config?: Config) {
     const debug = config?.debug || false
     const environment = config?.environment || 'testnet'
@@ -140,6 +162,18 @@ class HundredXClient {
    */
   #toWei = (value: number): bigint => BigInt(value * 1e18)
 
+  /**
+   * Waits for a transaction on the blockchain to be mined and included in a block.
+   *
+   * This function takes a transaction hash and an optional message as arguments. It attempts to
+   * retrieve the transaction receipt using the provided client. In case of an error, it waits
+   * for a second and then recursively calls itself again to retry fetching the receipt.
+   *
+   * @param {HexString} hash - The hexadecimal hash of the transaction to wait for.
+   * @param {string} message - (Optional) A message to log before waiting for the transaction.
+   * @returns {Promise<void>} (Implicit) This function does not explicitly return a value, but it waits
+   * for the transaction to be mined and logs related information.
+   */
   #waitForTransaction = async (hash: HexString, message: string): Promise<void> => {
     if (message) this.#logger.info({ msg: message })
 
@@ -152,6 +186,16 @@ class HundredXClient {
     }
   }
 
+  /**
+   * Deposits a specified quantity of an asset.
+   *
+   * @param {number} quantity The amount of the asset to deposit.
+   * @param {MarginAssetKey} [asset='USDB'] The type of asset to deposit (default: USDB).
+   * @returns {Promise<DepositReturnType>} A promise that resolves with an object containing the deposit status and transaction hash, or an error object.
+   *
+   * @throws {ContractFunctionRevertedError} Thrown if a user-facing error occurs during the deposit, such as insufficient allowance or failed deposit. The error object will contain the error name and message.
+   * @throws {BaseError} Thrown if an unexpected error occurs during the deposit. The error object may not provide user-friendly messages.
+   */
   public deposit = async (
     quantity: number,
     asset: MarginAssetKey = 'USDB',
@@ -159,7 +203,7 @@ class HundredXClient {
     this.#logger.info({ msg: `Depositing ${quantity} ${asset}...` })
 
     const assetAddress = MARGIN_ASSETS[this.environment][asset]
-    const bigQuantity = BigInt(quantity * 1e18)
+    const bigQuantity = this.#toWei(quantity)
 
     const allowance = await this.#publicClient.readContract({
       abi: ERC20,
