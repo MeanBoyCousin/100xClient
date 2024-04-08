@@ -1,5 +1,13 @@
 import type { MarginAssetKey } from './constants/marginAssets'
-import type { Config, EIP712Domain, Environment, HexString, DepositReturnType } from './types'
+import type {
+  BaseApiResponse,
+  Config,
+  DepositReturnType,
+  EIP712Domain,
+  Environment,
+  HexString,
+  WithdrawReturnType,
+} from './types'
 import type { Logger } from 'pino'
 import type { PrivateKeyAccount, PublicClient, WalletClient } from 'viem'
 
@@ -15,7 +23,9 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { eip712WalletActions } from 'viem/zksync'
 
 import CIAO from './ABI/CIAO'
+import EIP712 from './ABI/EIP712'
 import ERC20 from './ABI/ERC20'
+import API_URL from './constants/api'
 import CHAINS from './constants/chains'
 import CIAO_ADDRESS from './constants/ciao'
 import MARGIN_ASSETS from './constants/marginAssets'
@@ -88,9 +98,49 @@ class HundredXClient {
     Object.freeze(this)
   }
 
-  // #getCurrentTimestamp = () => Date.now()
+  /**
+   * Fetches data from the 100x API asynchronously.
+   *
+   * @template TypedResponse - The type expected for the parsed JSON response.
+   * @param {string} path - The API endpoint path relative to the base API URL.
+   * @param {RequestInit} config - (Optional) An object containing configuration options for the fetch request.
+   *   See [MDN Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for details.
+   *
+   * @returns {Promise<TypedResponse>} A promise that resolves with the parsed JSON response as the specified type.
+   */
+  #fetchFromAPI = async <TypedResponse>(
+    path: string,
+    config?: RequestInit,
+  ): Promise<TypedResponse> => {
+    const url = `${API_URL[this.environment]}/${path}`
+    this.#logger.debug({
+      ...config,
+      body: config?.body ? JSON.parse(config.body as string) : undefined,
+      msg: 'Communicating with API...',
+      url,
+    })
 
-  #waitForTransaction = async (hash: HexString, message: string) => {
+    const response = await fetch(url, config)
+
+    return (await response.json()) as TypedResponse
+  }
+
+  /**
+   * Gets the current timestamp in milliseconds.
+   *
+   * @returns {number} The current timestamp in milliseconds.
+   */
+  #getCurrentTimestamp = (): number => Date.now()
+
+  /**
+   * Converts a decimal number of Ether to Wei.
+   *
+   * @param {number} value - The decimal number representing the quantity in Ether.
+   * @returns {bigint} The equivalent value in Wei as a BigInt.
+   */
+  #toWei = (value: number): bigint => BigInt(value * 1e18)
+
+  #waitForTransaction = async (hash: HexString, message: string): Promise<void> => {
     if (message) this.#logger.info({ msg: message })
 
     try {
@@ -175,7 +225,76 @@ class HundredXClient {
     }
   }
 
-  // Withdraw via API.
+  /**
+   * Withdraw a specified quantity of an asset.
+   *
+   * @param {number} quantity The amount of the asset to withdraw.
+   * @param {MarginAssetKey} [asset='USDB'] The type of asset to withdraw (default: USDB).
+   * @returns {Promise<WithdrawReturnType>} A promise that resolves with an object containing the withdrawal status, or an error object.
+   *
+   * @throws {Error} Thrown if an error occurs during the withdrawal process. The error object may contain details from the API response or a generic message.
+   */
+  public withdraw = async (
+    quantity: number,
+    asset: MarginAssetKey = 'USDB',
+  ): Promise<WithdrawReturnType> => {
+    this.#logger.info({ msg: `Withdrawing ${quantity} ${asset}...` })
+
+    const bigQuantity = this.#toWei(quantity)
+    const nonce = this.#getCurrentTimestamp()
+
+    const sharedParams = {
+      account: this.account.address,
+      asset: MARGIN_ASSETS[this.environment][asset],
+      subAccountId: this.subAccountId,
+    }
+    const message = {
+      ...sharedParams,
+      nonce: BigInt(nonce),
+      quantity: bigQuantity,
+    }
+
+    try {
+      const signature = await this.account.signTypedData({
+        domain: this.domain,
+        message,
+        primaryType: 'Withdraw',
+        types: EIP712,
+      })
+
+      this.#logger.debug({
+        msg: 'Generated signature with following params:',
+        ...message,
+      })
+
+      const { error, success } = await this.#fetchFromAPI<BaseApiResponse>('withdraw', {
+        body: JSON.stringify({
+          ...sharedParams,
+          nonce,
+          quantity: bigQuantity.toString(),
+          signature,
+        }),
+        method: 'POST',
+      })
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          success: false,
+        }
+      }
+
+      this.#logger.info({ msg: 'Withdrawal completed!' })
+      return { success }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        success: false,
+      }
+    }
+  }
 }
 
 export default HundredXClient

@@ -1,4 +1,9 @@
 // Config & common types
+interface BaseApiResponse {
+  error?: string
+  success: boolean
+}
+
 interface Config {
   debug?: boolean
   environment?: Environment
@@ -17,13 +22,28 @@ type Environment = 'mainnet' | 'testnet'
 type HexString = `0x${string}`
 
 // Method return types
-interface DepositReturnType {
+interface ErrorReturnType {
   error?: {
     errorName?: string
     message: string
   }
+}
+
+interface DepositReturnType extends ErrorReturnType {
   success: boolean
   transactionHash?: HexString
 }
 
-export { type Config, type DepositReturnType, type EIP712Domain, type Environment, type HexString }
+interface WithdrawReturnType extends ErrorReturnType {
+  success: boolean
+}
+
+export {
+  type BaseApiResponse,
+  type Config,
+  type DepositReturnType,
+  type EIP712Domain,
+  type Environment,
+  type HexString,
+  type WithdrawReturnType,
+}
