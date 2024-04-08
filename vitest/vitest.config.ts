@@ -4,7 +4,10 @@ import { defineConfig } from 'vitest/config'
 
 const config = defineConfig({
   resolve: {
-    alias: [{ find: 'src', replacement: resolve(__dirname, '../', './src') }],
+    alias: [
+      { find: 'src', replacement: resolve(__dirname, '../', './src') },
+      { find: 'vitest/utils', replacement: resolve(__dirname, '../', './vitest/utils.ts') },
+    ],
   },
   root: './src',
   test: {

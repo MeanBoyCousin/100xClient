@@ -31,6 +31,7 @@ HundredXClient {
   "rpc": "https://test-rpc.quiknode.pro",
   "subAccountId": 2,
   "verifierAddress": "0x0",
+  "withdraw": [Function],
 }
 `;
 
@@ -65,6 +66,7 @@ HundredXClient {
   "rpc": "https://test-rpc.quiknode.pro",
   "subAccountId": 2,
   "verifierAddress": "0x65CbB566D1A6E60107c0c7888761de1AdFa1ccC0",
+  "withdraw": [Function],
 }
 `;
 
@@ -95,5 +97,6 @@ HundredXClient {
   "rpc": "https://sepolia.blast.io",
   "subAccountId": 1,
   "verifierAddress": "0x65CbB566D1A6E60107c0c7888761de1AdFa1ccC0",
+  "withdraw": [Function],
 }
 `;
