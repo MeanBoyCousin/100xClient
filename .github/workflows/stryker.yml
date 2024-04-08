@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     name: Test
+    permissions:
+      actions: write
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
