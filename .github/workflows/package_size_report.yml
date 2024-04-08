@@ -1,0 +1,38 @@
+name: Package Size Report
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  pkg-size-report:
+    name: Package Size Report
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Cancel old runs
+        uses: styfle/cancel-workflow-action@0.12.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: 'yarn'
+          node-version: '18.x'
+
+      - name: Package size report
+        uses: pkg-size/action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          build-command: yarn build
+          unchanged-files: show
