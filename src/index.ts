@@ -15,7 +15,7 @@ import type {
 import type { Logger } from 'pino'
 import type { PrivateKeyAccount, PublicClient, WalletClient } from 'viem'
 
-import logger from 'pino'
+import logger, { levels } from 'pino'
 import {
   BaseError,
   ContractFunctionRevertedError,
@@ -98,7 +98,7 @@ class HundredXClient {
       level: debug ? 'trace' : 'info',
       name: '100x-client',
       mixin: (messageObject, level) => {
-        if (level > logger.levels.values.debug) this.logs.push(messageObject)
+        if (level > levels.values.debug) this.logs.push(messageObject)
 
         return messageObject
       },
