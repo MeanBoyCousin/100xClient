@@ -7,6 +7,10 @@ import type {
   Environment,
   HexString,
   WithdrawReturnType,
+  ProductsReturnType,
+  ProductsResponse,
+  ProductResponse,
+  ProductReturnType,
 } from './types'
 import type { Logger } from 'pino'
 import type { PrivateKeyAccount, PublicClient, WalletClient } from 'viem'
@@ -185,6 +189,62 @@ class HundredXClient {
       await this.#waitForTransaction(hash, '')
     }
   }
+
+  // REST endpoints
+
+  /**
+   * Get a list of all products.
+   *
+   * {@link https://100x.readme.io/reference/list-products}
+   *
+   * @returns {Promise<ProductsReturnType>} A promise that resolves with an object containing a list of products, or an error object.
+   */
+  public getProducts = async (): Promise<ProductsReturnType> => {
+    try {
+      const products = await this.#fetchFromAPI<ProductsResponse>('products')
+
+      return { products }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        products: [],
+      }
+    }
+  }
+
+  /**
+   * Get a specific product.
+   *
+   * {@link https://100x.readme.io/reference/get-product} - By product ID.
+   *
+   * {@link https://100x.readme.io/reference/get-product-copy} - By product symbol.
+   *
+   * @returns {Promise<ProductsReturnType>} A promise that resolves with an object containing the product, or an error object.
+   */
+  public getProduct = async (identifier: number | string): Promise<ProductReturnType> => {
+    try {
+      if (typeof identifier === 'number') {
+        const product = await this.#fetchFromAPI<ProductResponse>(
+          `products/product-by-id/${identifier}`,
+        )
+
+        return { product }
+      }
+
+      const product = await this.#fetchFromAPI<ProductResponse>(`products/${identifier}`)
+
+      return { product }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        product: {},
+      }
+    }
+  }
+
+  // REST AUTH endpoints
 
   /**
    * Deposits a specified quantity of an asset.
