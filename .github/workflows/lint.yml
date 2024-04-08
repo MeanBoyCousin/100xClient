@@ -1,0 +1,40 @@
+name: Lint
+
+on:
+  pull_request:
+    branches: [master]
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Cancel old runs
+        uses: styfle/cancel-workflow-action@0.12.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: 'yarn'
+          node-version: '18.x'
+
+      - name: Install packages
+        run: yarn
+
+      - name: Run Markdownlint
+        run: npx markdownlint ./
+
+      - name: Run Prettier
+        run: npx prettier **/*.{js,json,ts,yml} --check
+
+      - name: Run ESlint
+        run: yarn lint
