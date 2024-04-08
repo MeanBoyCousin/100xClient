@@ -6,11 +6,13 @@ import type {
   EIP712Domain,
   Environment,
   HexString,
-  WithdrawReturnType,
-  ProductsReturnType,
-  ProductsResponse,
   ProductResponse,
   ProductReturnType,
+  ProductsResponse,
+  ProductsReturnType,
+  ServerTimeResponse,
+  ServerTimeReturnType,
+  WithdrawReturnType,
 } from './types'
 import type { Logger } from 'pino'
 import type { PrivateKeyAccount, PublicClient, WalletClient } from 'viem'
@@ -241,6 +243,24 @@ class HundredXClient {
       return {
         error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
         product: {},
+      }
+    }
+  }
+
+  /**
+   * Get the current server time in unix milliseconds.
+   *
+   * {@link https://100x.readme.io/reference/server-time}
+   *
+   * @returns {Promise<ServerTimeReturnType>} A promise that resolves with an object containing the timestamp, or an error object.
+   */
+  public getServerTime = async (): Promise<ServerTimeReturnType> => {
+    try {
+      return await this.#fetchFromAPI<ServerTimeResponse>('time')
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
       }
     }
   }

@@ -46,6 +46,10 @@ interface Product {
 type ProductResponse = Product
 type ProductsResponse = Product[]
 
+interface ServerTimeResponse {
+  serverTime: number
+}
+
 // Method return types
 interface ErrorReturnType {
   error?: {
@@ -67,6 +71,8 @@ interface ProductsReturnType extends ErrorReturnType {
   products: ProductsResponse
 }
 
+interface ServerTimeReturnType extends ErrorReturnType, Partial<ServerTimeResponse> {}
+
 interface WithdrawReturnType extends ErrorReturnType {
   success: boolean
 }
@@ -82,5 +88,7 @@ export {
   type ProductReturnType,
   type ProductsResponse,
   type ProductsReturnType,
+  type ServerTimeResponse,
+  type ServerTimeReturnType,
   type WithdrawReturnType,
 }
