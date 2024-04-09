@@ -5,7 +5,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   dts: true,
   format: 'esm',
-  minify: true,
+  minify: false,
   platform: 'node',
   outDir: 'lib',
   sourcemap: true,
