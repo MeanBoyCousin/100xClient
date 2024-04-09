@@ -15,10 +15,15 @@
   ],
   "repository": "https://github.com/MeanBoyCousin/100xClient.git",
   "license": "MIT",
-  "author": "Tim Dunphy",
+  "author": "Tim Dunphy <tim@rysk.finance>",
   "type": "module",
+  "exports": {
+    ".": {
+      "import ": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    }
+  },
   "main": "lib/index.js",
-  "module": "lib/index.mjs",
   "types": "lib/index.d.ts",
   "files": [
     "lib"
