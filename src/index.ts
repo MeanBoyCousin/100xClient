@@ -318,7 +318,7 @@ class HundredXClient {
    *
    * {@link https://100x.readme.io/reference/get-product-copy} By product symbol.
    *
-   * @param [identifier] The product symbol or product ID to get.
+   * @param identifier The product symbol or product ID to get.
    * @returns A promise that resolves with an object containing the product, or an error object.
    * @throws {Error} Thrown if an error occurs during the request.
    */
