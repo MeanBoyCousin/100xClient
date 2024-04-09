@@ -152,6 +152,33 @@ class HundredXClient {
   }
 
   /**
+   * Generates a signature for a message using EIP712.
+   *
+   * @param message - The message object to be signed. The structure of this object should conform to the schema defined in the `EIP712` types.
+   * @param primaryType - The primary type of the message within the EIP712 schema. This should be a key of the `EIP712` types object.
+   * @returns A promise that resolves to the generated signature as a hex string.
+   * @throws {Error} - If there is an error during the signing process.
+   */
+  #generateSignature = async (
+    message: any,
+    primaryType: keyof typeof EIP712,
+  ): Promise<HexString> => {
+    const signature = await this.account.signTypedData({
+      domain: this.domain,
+      message,
+      primaryType,
+      types: EIP712,
+    })
+
+    this.#logger.debug({
+      msg: 'Generated signature with following params:',
+      ...message,
+    })
+
+    return signature
+  }
+
+  /**
    * Gets the current timestamp in milliseconds.
    *
    * @returns The current timestamp in milliseconds.
@@ -515,12 +542,7 @@ class HundredXClient {
     }
 
     try {
-      const signature = await this.account.signTypedData({
-        domain: this.domain,
-        message,
-        primaryType: 'Withdraw',
-        types: EIP712,
-      })
+      const signature = await this.#generateSignature(message, 'Withdraw')
 
       this.#logger.debug({
         msg: 'Generated signature with following params:',
