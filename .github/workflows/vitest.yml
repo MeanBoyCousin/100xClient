@@ -13,6 +13,9 @@ jobs:
       actions: write
       contents: read
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
     timeout-minutes: 5
 
     steps:
@@ -28,10 +31,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           cache: 'yarn'
-          node-version: '18.x'
+          node-version: ${{ matrix.node-version }}
 
       - name: Install packages
-        run: yarn
+        # We ignore engines here to avoid issues
+        # installing dependencies that are not needed
+        # for the build or to run these tests.
+        run: yarn --ignore-engines
 
       - name: Run tests
         run: yarn test --silent
