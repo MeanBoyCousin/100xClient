@@ -6,6 +6,9 @@ import type {
   EIP712Domain,
   Environment,
   HexString,
+  KlineOptionalArgs,
+  KlinesResponse,
+  KlinesReturnType,
   ProductResponse,
   ProductReturnType,
   ProductsResponse,
@@ -193,7 +196,73 @@ class HundredXClient {
     }
   }
 
+  // --------------
   // REST endpoints
+  // --------------
+
+  /**
+   * Get K-line (candlestick) chart data for a product.
+   *
+   * {@link https://100x.readme.io/reference/ui-klines}
+   *
+   * @param {string} productSymbol The product symbol to get data for (btcperp, ethperp, etc.).
+   * @param {KlineOptionalArgs} [optionalArgs] Optional query parameters.
+   * @param {KlineOptionalArgs["endTime"]} config.endTime The end time range to query in unix milliseconds.
+   * @param {KlineOptionalArgs["interval"]} config.interval The time interval for each K-line.
+   * Options are '1m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '8h' | '1d' | '3d' | '1w'.
+   * @param {KlineOptionalArgs["limit"]} config.limit The amount of K-lines to fetch. Should be between 1 & 1000 inclusive.
+   * @param {KlineOptionalArgs["startTime"]} config.startTime The start time range to query in unix milliseconds.
+   * @returns {Promise<KlinesReturnType>} A promise that resolves with an object containing the K-line data, or an error object.
+   *
+   * @throws {Error} Thrown if an error occurs during the withdrawal process. The error object may contain details from the API response or a generic message.
+   */
+  public getKlines = async (
+    productSymbol: string,
+    optionalArgs?: KlineOptionalArgs,
+  ): Promise<KlinesReturnType> => {
+    if (optionalArgs) {
+      if (Number(optionalArgs.limit) > 1000 || Number(optionalArgs.limit) <= 0) {
+        return {
+          error: { message: 'Limit must be between 0 and 1000.' },
+          klines: [],
+        }
+      }
+
+      if (Number(optionalArgs.startTime) > Number(optionalArgs.endTime)) {
+        return {
+          error: { message: 'Start time cannot be after end time.' },
+          klines: [],
+        }
+      }
+
+      if (Number(optionalArgs.startTime) > this.#getCurrentTimestamp()) {
+        return {
+          error: { message: 'Start time cannot be in the future.' },
+          klines: [],
+        }
+      }
+    }
+
+    const queryParams = optionalArgs
+      ? `${Object.entries(optionalArgs)
+          .map(([key, value]) => `&${key}=${value}`)
+          .join('')}`
+      : ''
+
+    try {
+      const klines = await this.#fetchFromAPI<KlinesResponse>(
+        `uiKlines?symbol=${productSymbol}${queryParams}`,
+      )
+
+      return { klines }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        klines: [],
+      }
+    }
+  }
 
   /**
    * Get a list of all products.
@@ -201,6 +270,8 @@ class HundredXClient {
    * {@link https://100x.readme.io/reference/list-products}
    *
    * @returns {Promise<ProductsReturnType>} A promise that resolves with an object containing a list of products, or an error object.
+   *
+   * @throws {Error} Thrown if an error occurs during the request.
    */
   public getProducts = async (): Promise<ProductsReturnType> => {
     try {
@@ -224,6 +295,8 @@ class HundredXClient {
    * {@link https://100x.readme.io/reference/get-product-copy} - By product symbol.
    *
    * @returns {Promise<ProductsReturnType>} A promise that resolves with an object containing the product, or an error object.
+   *
+   * @throws {Error} Thrown if an error occurs during the request.
    */
   public getProduct = async (identifier: number | string): Promise<ProductReturnType> => {
     try {
@@ -253,6 +326,8 @@ class HundredXClient {
    * {@link https://100x.readme.io/reference/server-time}
    *
    * @returns {Promise<ServerTimeReturnType>} A promise that resolves with an object containing the timestamp, or an error object.
+   *
+   * @throws {Error} Thrown if an error occurs during the request.
    */
   public getServerTime = async (): Promise<ServerTimeReturnType> => {
     try {
@@ -265,7 +340,9 @@ class HundredXClient {
     }
   }
 
+  // -------------------
   // REST AUTH endpoints
+  // -------------------
 
   /**
    * Deposits a specified quantity of an asset.
