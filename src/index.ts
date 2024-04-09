@@ -60,26 +60,16 @@ class HundredXClient {
 
   /**
    * Creates a new instance of the 100x client.
+   *
    * See {@link https://100x.readme.io/} for detailed documentation.
    *
-   * @param {HexString} privateKey The private key used to sign transactions.
-   * @param {number} [subAccountId=1] The sub-account ID to use. Defaults to 1.
-   * @param {Config} [config] Optional configuration options.
-   * @param {Config["debug"]} config.debug Enable debug mode.
-   * @param {Config["environment"]} config.environment The environment to use. Defaults to "testnet".
-   * @param {Config["rpc"]} config.rpc The RPC URL to use.
+   * @param privateKey The private key used to sign transactions.
+   * @param subAccountId The sub-account ID to use. Defaults to 1.
+   * @param [config] (Optional) Configuration options.
+   * @param config.debug Enable debug mode.
+   * @param config.environment The environment to use. Defaults to "testnet".
+   * @param config.rpc The RPC URL to use.
    * @throws {Error} If the provided private key is invalid.
-   *
-   * @property {Account} account The Ethereum account derived from the provided private key.
-   * @property {number} chain The chain ID of the connected network.
-   * @property {string} ciaoAddress The address of the CIAO contract on the connected network.
-   * @property {Domain} domain The EIP-712 domain information used for transaction signing.
-   * @property {string} environment The name of the connected network environment.
-   * @property {Array<Object>} logs An array containing logged messages. This may be useful for debugging.
-   * @property {HexString} privateKey The provided private key.
-   * @property {string} rpc The RPC URL of the connected network.
-   * @property {number} subAccountId The configured sub-account ID.
-   * @property {string} verifierAddress The address of the verification contract on the connected network.
    */
   constructor(privateKey: HexString, subAccountId: number = 1, config?: Config) {
     const debug = config?.debug || false
@@ -135,12 +125,11 @@ class HundredXClient {
   /**
    * Fetches data from the 100x API asynchronously.
    *
-   * @template TypedResponse - The type expected for the parsed JSON response.
-   * @param {string} path - The API endpoint path relative to the base API URL.
-   * @param {RequestInit} config - (Optional) An object containing configuration options for the fetch request.
+   * @template TypedResponse The type expected for the parsed JSON response.
+   * @param path The API endpoint path relative to the base API URL.
+   * @param [config] (Optional) An object containing configuration options for the fetch request.
    *   See [MDN Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for details.
-   *
-   * @returns {Promise<TypedResponse>} A promise that resolves with the parsed JSON response as the specified type.
+   * @returns A promise that resolves with the parsed JSON response as the specified type.
    */
   #fetchFromAPI = async <TypedResponse>(
     path: string,
@@ -162,15 +151,15 @@ class HundredXClient {
   /**
    * Gets the current timestamp in milliseconds.
    *
-   * @returns {number} The current timestamp in milliseconds.
+   * @returns The current timestamp in milliseconds.
    */
   #getCurrentTimestamp = (): number => Date.now()
 
   /**
    * Converts a decimal number of Ether to Wei.
    *
-   * @param {number} value - The decimal number representing the quantity in Ether.
-   * @returns {bigint} The equivalent value in Wei as a BigInt.
+   * @param value The decimal number representing the quantity in Ether.
+   * @returns The equivalent value in Wei as a BigInt.
    */
   #toWei = (value: number): bigint => BigInt(value * 1e18)
 
@@ -181,9 +170,9 @@ class HundredXClient {
    * retrieve the transaction receipt using the provided client. In case of an error, it waits
    * for a second and then recursively calls itself again to retry fetching the receipt.
    *
-   * @param {HexString} hash - The hexadecimal hash of the transaction to wait for.
-   * @param {string} message - (Optional) A message to log before waiting for the transaction.
-   * @returns {Promise<void>} (Implicit) This function does not explicitly return a value, but it waits
+   * @param hash The hexadecimal hash of the transaction to wait for.
+   * @param message A message to log before waiting for the transaction.
+   * @returns (Implicit) This function does not explicitly return a value, but it waits
    * for the transaction to be mined and logs related information.
    */
   #waitForTransaction = async (hash: HexString, message: string): Promise<void> => {
@@ -207,15 +196,14 @@ class HundredXClient {
    *
    * {@link https://100x.readme.io/reference/ui-klines}
    *
-   * @param {string} productSymbol The product symbol to get data for (btcperp, ethperp, etc.).
-   * @param {KlineOptionalArgs} [optionalArgs] Optional query parameters.
-   * @param {KlineOptionalArgs["endTime"]} config.endTime The end time range to query in unix milliseconds.
-   * @param {KlineOptionalArgs["interval"]} config.interval The time interval for each K-line.
+   * @param productSymbol The product symbol to get data for (btcperp, ethperp, etc.).
+   * @param [optionalArgs] (Optional) Query parameters.
+   * @param optionalArgs.endTime The end time range to query in unix milliseconds.
+   * @param optionalArgs.interval The time interval for each K-line.
    * Options are '1m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '8h' | '1d' | '3d' | '1w'.
-   * @param {KlineOptionalArgs["limit"]} config.limit The amount of K-lines to fetch. Should be between 1 & 1000 inclusive.
-   * @param {KlineOptionalArgs["startTime"]} config.startTime The start time range to query in unix milliseconds.
-   * @returns {Promise<KlinesReturnType>} A promise that resolves with an object containing the K-line data, or an error object.
-   *
+   * @param optionalArgs.limit The amount of K-lines to fetch. Should be between 1 & 1000 inclusive.
+   * @param optionalArgs.startTime The start time range to query in unix milliseconds.
+   * @returns A promise that resolves with an object containing the K-line data, or an error object.
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
   public getKlines = async (
@@ -271,8 +259,7 @@ class HundredXClient {
    *
    * {@link https://100x.readme.io/reference/list-products}
    *
-   * @returns {Promise<ProductsReturnType>} A promise that resolves with an object containing a list of products, or an error object.
-   *
+   * @returns A promise that resolves with an object containing a list of products, or an error object.
    * @throws {Error} Thrown if an error occurs during the request.
    */
   public getProducts = async (): Promise<ProductsReturnType> => {
@@ -292,12 +279,12 @@ class HundredXClient {
   /**
    * Get a specific product.
    *
-   * {@link https://100x.readme.io/reference/get-product} - By product ID.
+   * {@link https://100x.readme.io/reference/get-product} By product ID.
    *
-   * {@link https://100x.readme.io/reference/get-product-copy} - By product symbol.
+   * {@link https://100x.readme.io/reference/get-product-copy} By product symbol.
    *
-   * @returns {Promise<ProductsReturnType>} A promise that resolves with an object containing the product, or an error object.
-   *
+   * @param [identifier] The product symbol or product ID to get.
+   * @returns A promise that resolves with an object containing the product, or an error object.
    * @throws {Error} Thrown if an error occurs during the request.
    */
   public getProduct = async (identifier: number | string): Promise<ProductReturnType> => {
@@ -327,8 +314,7 @@ class HundredXClient {
    *
    * {@link https://100x.readme.io/reference/server-time}
    *
-   * @returns {Promise<ServerTimeReturnType>} A promise that resolves with an object containing the timestamp, or an error object.
-   *
+   * @returns A promise that resolves with an object containing the timestamp, or an error object.
    * @throws {Error} Thrown if an error occurs during the request.
    */
   public getServerTime = async (): Promise<ServerTimeReturnType> => {
@@ -347,9 +333,8 @@ class HundredXClient {
    *
    * {@link https://100x.readme.io/reference/24hr-ticker-data}
    *
-   * @param {string} [productSymbol] The product symbol to get ticker data for. If left blank, data for all tickers is returned.
-   * @returns {Promise<TickerReturnType>} A promise that resolves with an object containing the ticker data, or an error object.
-   *
+   * @param [productSymbol] (Optional) The product symbol to get ticker data for. If left blank, data for all tickers is returned.
+   * @returns A promise that resolves with an object containing the ticker data, or an error object.
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
   public getTickers = async (productSymbol?: string): Promise<TickerReturnType> => {
@@ -385,10 +370,9 @@ class HundredXClient {
    *
    * {@link https://100x.readme.io/reference/depositing}
    *
-   * @param {number} quantity The amount of the asset to deposit.
-   * @param {MarginAssetKey} [asset='USDB'] The type of asset to deposit (default: USDB).
-   * @returns {Promise<DepositReturnType>} A promise that resolves with an object containing the deposit status and transaction hash, or an error object.
-   *
+   * @param quantity The amount of the asset to deposit.
+   * @param [asset] The type of asset to deposit (default: USDB).
+   * @returns A promise that resolves with an object containing the deposit status and transaction hash, or an error object.
    * @throws {ContractFunctionRevertedError} Thrown if a user-facing error occurs during the deposit, such as insufficient allowance or failed deposit. The error object will contain the error name and message.
    * @throws {BaseError} Thrown if an unexpected error occurs during the deposit. The error object may not provide user-friendly messages.
    */
@@ -470,10 +454,9 @@ class HundredXClient {
    *
    * {@link https://100x.readme.io/reference/withdraw}
    *
-   * @param {number} quantity The amount of the asset to withdraw.
-   * @param {MarginAssetKey} [asset='USDB'] The type of asset to withdraw (default: USDB).
-   * @returns {Promise<WithdrawReturnType>} A promise that resolves with an object containing the withdrawal status, or an error object.
-   *
+   * @param quantity The amount of the asset to withdraw.
+   * @param [asset] The type of asset to withdraw (default: USDB).
+   * @returns A promise that resolves with an object containing the withdrawal status, or an error object.
    * @throws {Error} Thrown if an error occurs during the withdrawal process. The error object may contain details from the API response or a generic message.
    */
   public withdraw = async (
