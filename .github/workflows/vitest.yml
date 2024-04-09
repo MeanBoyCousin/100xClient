@@ -8,15 +8,16 @@ on:
 
 jobs:
   test:
-    name: Test
+    name: Build and Test
     permissions:
       actions: write
       contents: read
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         node-version: [16.x, 18.x, 20.x]
-    timeout-minutes: 5
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    timeout-minutes: 10
 
     steps:
       - name: Cancel old runs
@@ -38,6 +39,9 @@ jobs:
         # installing dependencies that are not needed
         # for the build or to run these tests.
         run: yarn --ignore-engines
+
+      - name: Build
+        run: yarn build
 
       - name: Run tests
         run: yarn test --silent
