@@ -114,3 +114,36 @@ export const klines = [
     x: true,
   },
 ]
+
+export const tickers = [
+  {
+    productId: 1002,
+    productSymbol: 'ethperp',
+    oraclePrice: '3633138612183610451397',
+    markPrice: '3378124999999999999818',
+    priceChange: '10000000000000000000000000',
+    priceChangePercent: '0',
+    volume: '3621652000000000000000',
+    low: '0',
+    high: '10000000000000000000000000',
+    fundingRateHourly: '-499999999999999900',
+    fundingRateYearly: '-4382999999999999123400',
+    openInterest: '433926912499999999976621',
+    nextFundingTime: 1712667600,
+  },
+  {
+    productId: 1003,
+    productSymbol: 'btcperp',
+    oraclePrice: '70816037672632469474700',
+    markPrice: '70806062729901863024587',
+    priceChange: '75113700000000000000000',
+    priceChangePercent: '0',
+    volume: '96050000000000000000',
+    low: '0',
+    high: '75113700000000000000000',
+    fundingRateHourly: '-10848157239100',
+    fundingRateYearly: '-95094946357950600',
+    openInterest: '229411643244882036199661',
+    nextFundingTime: 1712667600,
+  },
+]
