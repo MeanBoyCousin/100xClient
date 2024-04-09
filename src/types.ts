@@ -3,6 +3,7 @@ interface Config {
   debug?: boolean
   environment?: Environment
   rpc?: string
+  subAccountId?: number
 }
 
 interface EIP712Domain {

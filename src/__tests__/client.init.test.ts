@@ -15,10 +15,11 @@ describe('The HundredXClient', () => {
   it.each(['mainnet', 'testnet'] as [Environment, Environment])(
     'should initialise correctly with all config parameters passed for a %s setup',
     environment => {
-      const Client = new HundredXClient(privateKey, 2, {
+      const Client = new HundredXClient(privateKey, {
         debug: true,
         environment,
         rpc: 'https://test-rpc.quiknode.pro',
+        subAccountId: 2,
       })
 
       expect(Client).toMatchSnapshot()
