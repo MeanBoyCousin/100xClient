@@ -9,6 +9,8 @@ import type {
   KlineOptionalArgs,
   KlinesResponse,
   KlinesReturnType,
+  OrderBookResponse,
+  OrderBookReturnType,
   ProductResponse,
   ProductReturnType,
   ProductsResponse,
@@ -191,6 +193,38 @@ class HundredXClient {
   // --------------
   // REST endpoints
   // --------------
+
+  /**
+   * Get the current state of the order book for a product.
+   *
+   * {@link https://100x.readme.io/reference/book-depth}
+   *
+   * @param productSymbol The product symbol to get data for (btcperp, ethperp, etc.).
+   * @param [limit] (Optional) The number of bids and asks to retrieve. Can be 5, 10 or 20 (default: 5).
+   * @param [granularity] (Optional) The number of decimals to remove from prices (default: 10).
+   * @returns A promise that resolves with an object containing asks and bids, or an error object.
+   * @throws {Error} Thrown if an error occurs fetching the data.
+   */
+  public getBookDepth = async (
+    productSymbol: string,
+    limit: 5 | 10 | 20 = 5,
+    granularity: number = 10,
+  ): Promise<OrderBookReturnType> => {
+    try {
+      const { asks, bids } = await this.#fetchFromAPI<OrderBookResponse>(
+        `depth?symbol=${productSymbol}&limit=${limit}&granularity=${granularity}`,
+      )
+
+      return { asks, bids }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        asks: [],
+        bids: [],
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+      }
+    }
+  }
 
   /**
    * Get K-line (candlestick) chart data for a product.

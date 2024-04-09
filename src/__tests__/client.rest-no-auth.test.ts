@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import HundredXClient from 'src'
-import { klines, privateKey, productsData, tickers } from 'vitest/utils'
+import { klines, privateKey, productsData, tickers, ethOrderBook } from 'vitest/utils'
 
 describe('The HundredXClient REST', () => {
   beforeEach(() => {
@@ -451,6 +451,154 @@ describe('The HundredXClient REST', () => {
       expect(result).toEqual({
         error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
         tickers: {},
+      })
+    })
+  })
+
+  describe('order book depth endpoint', () => {
+    it('should return the order book depth with just a symbol', async () => {
+      fetchMock.mockResponse(JSON.stringify(ethOrderBook))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.getBookDepth('ethperp')
+
+      expect(fetchMock.mock.calls[0][0]).toMatch(
+        /.+\/depth\?symbol=ethperp&limit=5&granularity=10$/,
+      )
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "asks": [
+            [
+              "3810200000000000000000",
+              "2410000000000000000",
+              "2410000000000000000",
+            ],
+            [
+              "3819800000000000000000",
+              "2970000000000000000",
+              "5380000000000000000",
+            ],
+            [
+              "3820500000000000000000",
+              "1880000000000000000",
+              "7260000000000000000",
+            ],
+            [
+              "3821500000000000000000",
+              "140000000000000000",
+              "7400000000000000000",
+            ],
+            [
+              "3821800000000000000000",
+              "4080000000000000000",
+              "11480000000000000000",
+            ],
+            [
+              "3822100000000000000000",
+              "2060000000000000000",
+              "13540000000000000000",
+            ],
+            [
+              "3824600000000000000000",
+              "540000000000000000",
+              "14080000000000000000",
+            ],
+            [
+              "3824900000000000000000",
+              "2430000000000000000",
+              "16510000000000000000",
+            ],
+            [
+              "3827100000000000000000",
+              "3920000000000000000",
+              "20430000000000000000",
+            ],
+            [
+              "3828700000000000000000",
+              "1580000000000000000",
+              "22010000000000000000",
+            ],
+          ],
+          "bids": [
+            [
+              "3801000000000000000000",
+              "2850000000000000000",
+              "2850000000000000000",
+            ],
+            [
+              "3800000000000000000000",
+              "1340000000000000000",
+              "4190000000000000000",
+            ],
+            [
+              "3796400000000000000000",
+              "3630000000000000000",
+              "7820000000000000000",
+            ],
+            [
+              "3796200000000000000000",
+              "2820000000000000000",
+              "10640000000000000000",
+            ],
+            [
+              "3795700000000000000000",
+              "1160000000000000000",
+              "11800000000000000000",
+            ],
+            [
+              "3794300000000000000000",
+              "780000000000000000",
+              "12580000000000000000",
+            ],
+            [
+              "3794000000000000000000",
+              "1860000000000000000",
+              "14440000000000000000",
+            ],
+            [
+              "3793800000000000000000",
+              "610000000000000000",
+              "15050000000000000000",
+            ],
+            [
+              "3793200000000000000000",
+              "2100000000000000000",
+              "17150000000000000000",
+            ],
+            [
+              "3792200000000000000000",
+              "200000000000000000",
+              "17350000000000000000",
+            ],
+          ],
+        }
+      `)
+    })
+
+    it('should return the order book depth with all optional args passed', async () => {
+      fetchMock.mockResponse(JSON.stringify(ethOrderBook))
+
+      const Client = new HundredXClient(privateKey)
+
+      await Client.getBookDepth('ethperp', 20, 18)
+
+      expect(fetchMock.mock.calls[0][0]).toMatch(
+        /.+\/depth\?symbol=ethperp&limit=20&granularity=18$/,
+      )
+    })
+
+    it('should handle an unknown error', async () => {
+      fetchMock.mockReject(new Error('An unknown error occurred'))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.getBookDepth('ethperp')
+
+      expect(result).toEqual({
+        asks: [],
+        bids: [],
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
       })
     })
   })

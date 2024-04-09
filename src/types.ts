@@ -42,8 +42,13 @@ interface Kline {
   v: bigint
   x: boolean
 }
-
 type KlinesResponse = Kline[]
+
+type OrderBookRow = [bigint, bigint, bigint]
+interface OrderBookResponse {
+  asks: OrderBookRow[]
+  bids: OrderBookRow[]
+}
 
 interface Product {
   active: boolean
@@ -107,6 +112,8 @@ interface KlinesReturnType extends ErrorReturnType {
   klines: Kline[]
 }
 
+interface OrderBookReturnType extends ErrorReturnType, OrderBookResponse {}
+
 interface ProductReturnType extends ErrorReturnType {
   product: ProductResponse | {}
 }
@@ -137,6 +144,8 @@ export {
   type KlineOptionalArgs,
   type KlinesResponse,
   type KlinesReturnType,
+  type OrderBookResponse,
+  type OrderBookReturnType,
   type ProductResponse,
   type ProductReturnType,
   type ProductsResponse,
