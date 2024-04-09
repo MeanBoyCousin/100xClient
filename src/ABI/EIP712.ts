@@ -19,30 +19,6 @@ const EIP712 = {
       type: 'address',
     },
   ],
-  Referral: [
-    {
-      name: 'account',
-      type: 'address',
-    },
-    {
-      name: 'code',
-      type: 'string',
-    },
-  ],
-  LoginMessage: [
-    {
-      name: 'account',
-      type: 'address',
-    },
-    {
-      name: 'message',
-      type: 'string',
-    },
-    {
-      name: 'timestamp',
-      type: 'uint64',
-    },
-  ],
   Order: [
     {
       name: 'account',
@@ -115,50 +91,6 @@ const EIP712 = {
     {
       name: 'orderId',
       type: 'string',
-    },
-  ],
-  ApproveSigner: [
-    {
-      name: 'account',
-      type: 'address',
-    },
-    {
-      name: 'subAccountId',
-      type: 'uint8',
-    },
-    {
-      name: 'approvedSigner',
-      type: 'address',
-    },
-    {
-      name: 'isApproved',
-      type: 'bool',
-    },
-    {
-      name: 'nonce',
-      type: 'uint64',
-    },
-  ],
-  Deposit: [
-    {
-      name: 'account',
-      type: 'address',
-    },
-    {
-      name: 'subAccountId',
-      type: 'uint8',
-    },
-    {
-      name: 'asset',
-      type: 'address',
-    },
-    {
-      name: 'quantity',
-      type: 'uint256',
-    },
-    {
-      name: 'nonce',
-      type: 'uint64',
     },
   ],
   Withdraw: [
