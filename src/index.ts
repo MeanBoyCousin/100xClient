@@ -270,6 +270,8 @@ class HundredXClient {
    * {@link https://100x.readme.io/reference/list-products}
    *
    * @returns {Promise<ProductsReturnType>} A promise that resolves with an object containing a list of products, or an error object.
+   *
+   * @throws {Error} Thrown if an error occurs during the request.
    */
   public getProducts = async (): Promise<ProductsReturnType> => {
     try {
@@ -293,6 +295,8 @@ class HundredXClient {
    * {@link https://100x.readme.io/reference/get-product-copy} - By product symbol.
    *
    * @returns {Promise<ProductsReturnType>} A promise that resolves with an object containing the product, or an error object.
+   *
+   * @throws {Error} Thrown if an error occurs during the request.
    */
   public getProduct = async (identifier: number | string): Promise<ProductReturnType> => {
     try {
@@ -322,6 +326,8 @@ class HundredXClient {
    * {@link https://100x.readme.io/reference/server-time}
    *
    * @returns {Promise<ServerTimeReturnType>} A promise that resolves with an object containing the timestamp, or an error object.
+   *
+   * @throws {Error} Thrown if an error occurs during the request.
    */
   public getServerTime = async (): Promise<ServerTimeReturnType> => {
     try {
@@ -334,7 +340,9 @@ class HundredXClient {
     }
   }
 
+  // -------------------
   // REST AUTH endpoints
+  // -------------------
 
   /**
    * Deposits a specified quantity of an asset.
