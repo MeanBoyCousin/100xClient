@@ -22,6 +22,28 @@ interface BaseApiResponse {
   success: boolean
 }
 
+interface KlineOptionalArgs {
+  endTime?: number
+  interval?: '1m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '8h' | '1d' | '3d' | '1w'
+  limit?: number
+  startTime?: number
+}
+
+interface Kline {
+  e: 'klines_'
+  E: number
+  s: string
+  i: KlineOptionalArgs['interval']
+  o: bigint
+  c: bigint
+  h: bigint
+  l: bigint
+  v: bigint
+  x: boolean
+}
+
+type KlinesResponse = Kline[]
+
 interface Product {
   active: boolean
   baseAsset: string
@@ -63,6 +85,10 @@ interface DepositReturnType extends ErrorReturnType {
   transactionHash?: HexString
 }
 
+interface KlinesReturnType extends ErrorReturnType {
+  klines: Kline[]
+}
+
 interface ProductReturnType extends ErrorReturnType {
   product: ProductResponse | {}
 }
@@ -84,6 +110,9 @@ export {
   type EIP712Domain,
   type Environment,
   type HexString,
+  type KlineOptionalArgs,
+  type KlinesReturnType,
+  type KlinesResponse,
   type ProductResponse,
   type ProductReturnType,
   type ProductsResponse,
