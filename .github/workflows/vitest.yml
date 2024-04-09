@@ -8,12 +8,12 @@ on:
 
 jobs:
   test:
-    name: Build and Test
+    name: Test
     permissions:
       actions: write
       contents: read
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 2
 
     steps:
       - name: Cancel old runs
@@ -31,13 +31,7 @@ jobs:
           node-version: '16.x'
 
       - name: Install packages
-        # We ignore engines here to avoid issues
-        # installing dependencies that are not needed
-        # for the build or to run these tests.
-        run: yarn --ignore-engines
-
-      - name: Build
-        run: yarn build
+        run: yarn
 
       - name: Run tests
         run: yarn test --silent
