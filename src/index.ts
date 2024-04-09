@@ -64,17 +64,18 @@ class HundredXClient {
    * See {@link https://100x.readme.io/} for detailed documentation.
    *
    * @param privateKey The private key used to sign transactions.
-   * @param subAccountId The sub-account ID to use. Defaults to 1.
    * @param [config] (Optional) Configuration options.
-   * @param config.debug Enable debug mode.
-   * @param config.environment The environment to use. Defaults to "testnet".
-   * @param config.rpc The RPC URL to use.
+   * @param [config.debug] Enable debug mode.
+   * @param [config.environment] The environment to use (default: testnet).
+   * @param [config.rpc] The RPC URL to use.
+   * @param [config.subAccountId] The sub-account ID to use (default: 1).
    * @throws {Error} If the provided private key is invalid.
    */
-  constructor(privateKey: HexString, subAccountId: number = 1, config?: Config) {
+  constructor(privateKey: HexString, config?: Config) {
     const debug = config?.debug || false
     const environment = config?.environment || 'testnet'
     const rpc = config?.rpc || CHAINS[environment].rpcUrls.default.http[0]
+    const subAccountId = config?.subAccountId ?? 1
 
     const account = privateKeyToAccount(privateKey)
     const chain = CHAINS[environment]
