@@ -15,6 +15,8 @@ import type {
   ProductsReturnType,
   ServerTimeResponse,
   ServerTimeReturnType,
+  TickerResponse,
+  TickerReturnType,
   WithdrawReturnType,
 } from './types'
 import type { Logger } from 'pino'
@@ -214,7 +216,7 @@ class HundredXClient {
    * @param {KlineOptionalArgs["startTime"]} config.startTime The start time range to query in unix milliseconds.
    * @returns {Promise<KlinesReturnType>} A promise that resolves with an object containing the K-line data, or an error object.
    *
-   * @throws {Error} Thrown if an error occurs during the withdrawal process. The error object may contain details from the API response or a generic message.
+   * @throws {Error} Thrown if an error occurs fetching the data.
    */
   public getKlines = async (
     productSymbol: string,
@@ -336,6 +338,40 @@ class HundredXClient {
       this.#logger.debug({ err: error })
       return {
         error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+      }
+    }
+  }
+
+  /**
+   * Get ticker data for a product(s).
+   *
+   * {@link https://100x.readme.io/reference/24hr-ticker-data}
+   *
+   * @param {string} [productSymbol] The product symbol to get ticker data for. If left blank, data for all tickers is returned.
+   * @returns {Promise<TickerReturnType>} A promise that resolves with an object containing the ticker data, or an error object.
+   *
+   * @throws {Error} Thrown if an error occurs fetching the data.
+   */
+  public getTickers = async (productSymbol?: string): Promise<TickerReturnType> => {
+    try {
+      const tickers = await this.#fetchFromAPI<TickerResponse>(
+        `ticker/24hr${productSymbol ? `?symbol=${productSymbol}` : ''}`,
+      )
+
+      return {
+        tickers: tickers.reduce(
+          (tickerMap: TickerReturnType['tickers'], ticker) => ({
+            ...tickerMap,
+            [ticker.productSymbol]: ticker,
+          }),
+          {},
+        ),
+      }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        tickers: {},
       }
     }
   }

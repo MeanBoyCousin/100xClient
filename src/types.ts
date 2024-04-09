@@ -72,6 +72,23 @@ interface ServerTimeResponse {
   serverTime: number
 }
 
+interface Ticker {
+  fundingRateHourly: bigint
+  fundingRateYearly: bigint
+  high: bigint
+  id: number
+  low: bigint
+  markPrice: bigint
+  nextFundingTime: number
+  openInterest: bigint
+  oraclePrice: bigint
+  priceChange: bigint
+  priceChangePercent: string
+  productSymbol: string
+  volume: bigint
+}
+type TickerResponse = Ticker[]
+
 // Method return types
 interface ErrorReturnType {
   error?: {
@@ -99,6 +116,12 @@ interface ProductsReturnType extends ErrorReturnType {
 
 interface ServerTimeReturnType extends ErrorReturnType, Partial<ServerTimeResponse> {}
 
+interface TickerReturnType extends ErrorReturnType {
+  tickers: {
+    [symbol: string]: Ticker
+  }
+}
+
 interface WithdrawReturnType extends ErrorReturnType {
   success: boolean
 }
@@ -111,13 +134,15 @@ export {
   type Environment,
   type HexString,
   type KlineOptionalArgs,
-  type KlinesReturnType,
   type KlinesResponse,
+  type KlinesReturnType,
   type ProductResponse,
   type ProductReturnType,
   type ProductsResponse,
   type ProductsReturnType,
   type ServerTimeResponse,
   type ServerTimeReturnType,
+  type TickerResponse,
+  type TickerReturnType,
   type WithdrawReturnType,
 }

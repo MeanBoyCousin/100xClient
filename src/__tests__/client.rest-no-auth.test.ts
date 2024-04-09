@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import HundredXClient from 'src'
-import { privateKey, productsData, klines } from 'vitest/utils'
+import { klines, privateKey, productsData, tickers } from 'vitest/utils'
 
 describe('The HundredXClient REST', () => {
   beforeEach(() => {
@@ -359,6 +359,98 @@ describe('The HundredXClient REST', () => {
       expect(result).toEqual({
         error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
         klines: [],
+      })
+    })
+  })
+
+  describe('ticker endpoint', () => {
+    it('should allow a user to get data for all tickers', async () => {
+      fetchMock.mockResponse(JSON.stringify(tickers))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.getTickers()
+
+      expect(fetchMock.mock.calls[0][0]).toMatch(/.+\/ticker\/24hr$/)
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "tickers": {
+            "btcperp": {
+              "fundingRateHourly": "-10848157239100",
+              "fundingRateYearly": "-95094946357950600",
+              "high": "75113700000000000000000",
+              "low": "0",
+              "markPrice": "70806062729901863024587",
+              "nextFundingTime": 1712667600,
+              "openInterest": "229411643244882036199661",
+              "oraclePrice": "70816037672632469474700",
+              "priceChange": "75113700000000000000000",
+              "priceChangePercent": "0",
+              "productId": 1003,
+              "productSymbol": "btcperp",
+              "volume": "96050000000000000000",
+            },
+            "ethperp": {
+              "fundingRateHourly": "-499999999999999900",
+              "fundingRateYearly": "-4382999999999999123400",
+              "high": "10000000000000000000000000",
+              "low": "0",
+              "markPrice": "3378124999999999999818",
+              "nextFundingTime": 1712667600,
+              "openInterest": "433926912499999999976621",
+              "oraclePrice": "3633138612183610451397",
+              "priceChange": "10000000000000000000000000",
+              "priceChangePercent": "0",
+              "productId": 1002,
+              "productSymbol": "ethperp",
+              "volume": "3621652000000000000000",
+            },
+          },
+        }
+      `)
+    })
+
+    it('should allow a user to get data for a specific product', async () => {
+      fetchMock.mockResponse(JSON.stringify([tickers[0]]))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.getTickers('ethperp')
+
+      expect(fetchMock.mock.calls[0][0]).toMatch(/.+\/ticker\/24hr\?symbol=ethperp$/)
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "tickers": {
+            "ethperp": {
+              "fundingRateHourly": "-499999999999999900",
+              "fundingRateYearly": "-4382999999999999123400",
+              "high": "10000000000000000000000000",
+              "low": "0",
+              "markPrice": "3378124999999999999818",
+              "nextFundingTime": 1712667600,
+              "openInterest": "433926912499999999976621",
+              "oraclePrice": "3633138612183610451397",
+              "priceChange": "10000000000000000000000000",
+              "priceChangePercent": "0",
+              "productId": 1002,
+              "productSymbol": "ethperp",
+              "volume": "3621652000000000000000",
+            },
+          },
+        }
+      `)
+    })
+
+    it('should handle an unknown error', async () => {
+      fetchMock.mockReject(new Error('An unknown error occurred'))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.getTickers('ethperp')
+
+      expect(result).toEqual({
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        tickers: {},
       })
     })
   })
