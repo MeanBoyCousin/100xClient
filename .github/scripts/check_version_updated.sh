@@ -2,7 +2,8 @@
 
 NEW_VERSION=$(cat package.json | jq .version)
 
-git checkout -f master
+git fetch origin master --depth 1
+git checkout origin/master
 
 CURRENT_VERSION=$(cat package.json | jq .version)
 
