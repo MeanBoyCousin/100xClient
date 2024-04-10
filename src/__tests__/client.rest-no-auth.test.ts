@@ -461,7 +461,7 @@ describe('The HundredXClient REST', () => {
 
       const Client = new HundredXClient(privateKey)
 
-      const result = await Client.getBookDepth('ethperp')
+      const result = await Client.getOrderBook('ethperp')
 
       expect(fetchMock.mock.calls[0][0]).toMatch(
         /.+\/depth\?symbol=ethperp&limit=5&granularity=10$/,
@@ -581,7 +581,7 @@ describe('The HundredXClient REST', () => {
 
       const Client = new HundredXClient(privateKey)
 
-      await Client.getBookDepth('ethperp', 20, 18)
+      await Client.getOrderBook('ethperp', 20, 18)
 
       expect(fetchMock.mock.calls[0][0]).toMatch(
         /.+\/depth\?symbol=ethperp&limit=20&granularity=18$/,
@@ -593,7 +593,7 @@ describe('The HundredXClient REST', () => {
 
       const Client = new HundredXClient(privateKey)
 
-      const result = await Client.getBookDepth('ethperp')
+      const result = await Client.getOrderBook('ethperp')
 
       expect(result).toEqual({
         asks: [],
