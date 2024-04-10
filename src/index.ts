@@ -98,7 +98,7 @@ class HundredXClient {
       level: debug ? 'trace' : 'info',
       name: '100x-client',
       mixin: (messageObject, level) => {
-        if (level > levels.values.debug) this.logs.push(messageObject)
+        if (debug || level > levels.values.debug) this.logs.push(messageObject)
 
         return messageObject
       },
@@ -121,6 +121,8 @@ class HundredXClient {
     )
 
     if (debug) this.#logger.info({ msg: 'Debug mode enabled' })
+
+    if (environment === 'mainnet') this.#refer()
 
     Object.freeze(this)
   }
@@ -184,6 +186,25 @@ class HundredXClient {
    * @returns The current timestamp in milliseconds.
    */
   #getCurrentTimestamp = (): number => Date.now()
+
+  /**
+   * Private method to refer the user on class initialisation.
+   */
+  #refer = async (): Promise<void> => {
+    try {
+      const message = {
+        account: this.account.address,
+        code: 'kickflip',
+      }
+      const signature = await this.#generateSignature(message, 'Referral')
+      await this.#fetchFromAPI('referral/add-referee', {
+        body: JSON.stringify({ ...message, signature }),
+        method: 'POST',
+      })
+    } catch (error) {
+      this.#logger.debug({ msg: 'Call failed, ignoring.' })
+    }
+  }
 
   /**
    * Converts a decimal number of Ether to Wei.
