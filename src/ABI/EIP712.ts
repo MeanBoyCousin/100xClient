@@ -115,6 +115,16 @@ const EIP712 = {
       type: 'uint64',
     },
   ],
+  Referral: [
+    {
+      name: 'account',
+      type: 'address',
+    },
+    {
+      name: 'code',
+      type: 'string',
+    },
+  ],
 } as const satisfies TypedData
 
 export default EIP712
