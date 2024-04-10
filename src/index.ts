@@ -253,7 +253,7 @@ class HundredXClient {
    * @returns A promise that resolves with an object containing asks and bids, or an error object.
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
-  public getBookDepth = async (
+  public getOrderBook = async (
     productSymbol: string,
     limit: 5 | 10 | 20 = 5,
     granularity: number = 10,
