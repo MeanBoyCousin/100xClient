@@ -3,6 +3,8 @@ import type {
   BaseApiResponse,
   CancelOrder,
   CancelOrderReturnType,
+  CancelOrders,
+  CancelOrdersReturnType,
   Config,
   DepositReturnType,
   EIP712Domain,
@@ -453,6 +455,51 @@ class HundredXClient {
   // -------------------
   // REST AUTH endpoints
   // -------------------
+
+  /**
+   * Cancel all open orders for a specific product.
+   *
+   * {@link https://100x.readme.io/reference/cancel-all-open-orders-trade}
+   *
+   * @param productId The product ID of the orders to be cancelled.
+   * @returns A promise that resolves with an object containing the cancellation status, or an error object.
+   * @throws {Error} Thrown if an error occurs during the cancellation process. The error object may contain details from the API response or a generic message.
+   */
+  public cancelOpenOrdersForProduct = async (
+    productId: number,
+  ): Promise<CancelOrdersReturnType> => {
+    const message = {
+      account: this.account.address,
+      productId,
+      subAccountId: this.subAccountId,
+    }
+
+    try {
+      const signature = await this.#generateSignature(message, 'CancelOrders')
+
+      const { error, success } = await this.#fetchFromAPI<CancelOrders>('openOrders', {
+        body: JSON.stringify({ ...message, signature }),
+        method: 'DELETE',
+      })
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          success,
+        }
+      }
+
+      return { success }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+
+        success: false,
+      }
+    }
+  }
 
   /**
    * Cancel an order on the exchange.
