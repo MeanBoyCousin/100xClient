@@ -454,6 +454,16 @@ class HundredXClient {
   // REST AUTH endpoints
   // -------------------
 
+  /**
+   * Cancel an order on the exchange.
+   *
+   * {@link https://100x.readme.io/reference/cancel-order}
+   *
+   * @param orderId The unique order ID of the order to be cancelled.
+   * @param productId The product ID of the order to be cancelled.
+   * @returns A promise that resolves with an object containing the cancellation status, or an error object.
+   * @throws {Error} Thrown if an error occurs during the cancellation process. The error object may contain details from the API response or a generic message.
+   */
   public cancelOrder = async (
     orderId: HexString,
     productId: number,
@@ -491,8 +501,17 @@ class HundredXClient {
     }
   }
 
-  public cancelOrders = async (orders: [HexString, number][]): Promise<CancelOrderReturnType[]> => {
-    return await Promise.all(orders.map(async order => await this.cancelOrder(...order)))
+  /**
+   * Cancels multiple orders on the exchange.
+   * This function is a wrapper around {@link HundredXClient.cancelOrder} and takes the same args in list form.
+   *
+   * @param ordersArgs A list of order arguments. See {@link HundredXClient.cancelOrder} for further details.
+   * @returns A promise that resolves to a list of objects with either the cancellation status or an error.
+   */
+  public cancelOrders = async (
+    ordersArgs: [HexString, number][],
+  ): Promise<CancelOrderReturnType[]> => {
+    return await Promise.all(ordersArgs.map(async order => await this.cancelOrder(...order)))
   }
 
   /**
