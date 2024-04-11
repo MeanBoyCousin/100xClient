@@ -47,7 +47,7 @@ import CIAO_ADDRESS from './constants/ciao'
 import MARGIN_ASSETS from './constants/marginAssets'
 import { THIRTY_DAYS } from './constants/time'
 import VERIFIER_ADDRESS from './constants/verifier'
-import { Environment, OrderType, TimeInForce } from './enums'
+import { Environment, Interval, OrderType, TimeInForce } from './enums'
 import sleep from './utils/sleep'
 
 class HundredXClient {
@@ -286,11 +286,10 @@ class HundredXClient {
    *
    * @param productSymbol The product symbol to get data for (btcperp, ethperp, etc.).
    * @param [optionalArgs] (Optional) Query parameters.
-   * @param optionalArgs.endTime The end time range to query in unix milliseconds.
-   * @param optionalArgs.interval The time interval for each K-line.
-   * Options are '1m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '8h' | '1d' | '3d' | '1w'.
-   * @param optionalArgs.limit The amount of K-lines to fetch. Should be between 1 & 1000 inclusive.
-   * @param optionalArgs.startTime The start time range to query in unix milliseconds.
+   * @param [optionalArgs.endTime] (Optional) The end time range to query in unix milliseconds.
+   * @param [optionalArgs.interval] (Optional) The time interval for each K-line. Use the {@link Interval} enum.
+   * @param [optionalArgs.limit] (Optional) The amount of K-lines to fetch. Should be between 1 & 1000 inclusive.
+   * @param [optionalArgs.startTime] (Optional) The start time range to query in unix milliseconds.
    * @returns A promise that resolves with an object containing the K-line data, or an error object.
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
