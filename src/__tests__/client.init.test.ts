@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import HundredXClient from 'src'
+import { Environment } from 'src/enums'
 import { privateKey } from 'vitest/utils'
 
 describe('The HundredXClient', () => {
@@ -17,7 +18,7 @@ describe('The HundredXClient', () => {
   it('should initialise correctly with all config parameters passed', () => {
     const Client = new HundredXClient(privateKey, {
       debug: true,
-      environment: 'testnet',
+      environment: Environment.TESTNET,
       rpc: 'https://test-rpc.quiknode.pro',
       subAccountId: 2,
     })
@@ -28,7 +29,7 @@ describe('The HundredXClient', () => {
   it('should POST the referral code if running on mainnet', async () => {
     fetchMock.mockResponse(JSON.stringify({ success: true }))
 
-    new HundredXClient(privateKey, { environment: 'mainnet' })
+    new HundredXClient(privateKey, { environment: Environment.MAINNET })
 
     await vi.waitFor(() => {
       if (!fetchMock.mock.calls.length) throw new Error('Awaiting call...')
@@ -48,7 +49,7 @@ describe('The HundredXClient', () => {
   it('should handle referral failures gracefully', async () => {
     fetchMock.mockReject(new Error('An unknown error occurred'))
 
-    const Client = new HundredXClient(privateKey, { debug: true, environment: 'mainnet' })
+    const Client = new HundredXClient(privateKey, { debug: true, environment: Environment.MAINNET })
 
     await vi.waitFor(() => {
       if (Client.logs.length !== 4) throw new Error('Awaiting call...')
