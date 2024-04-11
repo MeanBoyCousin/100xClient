@@ -44,10 +44,9 @@ interface BaseApiResponse {
   success: boolean
 }
 
-interface CancelOrder {
-  error?: string
-  success: boolean
-}
+interface CancelOrder extends BaseApiResponse {}
+
+interface CancelOrders extends CancelOrder {}
 
 interface KlineOptionalArgs {
   endTime?: number
@@ -153,6 +152,10 @@ interface CancelOrderReturnType extends ErrorReturnType {
   success: boolean
 }
 
+interface CancelOrdersReturnType extends ErrorReturnType {
+  success: boolean
+}
+
 interface DepositReturnType extends ErrorReturnType {
   success: boolean
   transactionHash?: HexString
@@ -194,6 +197,8 @@ export {
   type BaseApiResponse,
   type CancelOrder,
   type CancelOrderReturnType,
+  type CancelOrders,
+  type CancelOrdersReturnType,
   type Config,
   type DepositReturnType,
   type EIP712Domain,
