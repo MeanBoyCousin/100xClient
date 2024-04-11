@@ -47,6 +47,7 @@
         }
       }
     ],
+    "jsdoc/no-undefined-types": "error",
     "jsdoc/tag-lines": ["error", "never", { "startLines": null }],
     "linebreak-style": "off",
     "newline-per-chained-call": "off",
