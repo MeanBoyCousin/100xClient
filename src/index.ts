@@ -1,6 +1,8 @@
 import type { MarginAssetKey } from './constants/marginAssets'
 import type {
   BaseApiResponse,
+  CancelOrder,
+  CancelOrderReturnType,
   Config,
   DepositReturnType,
   EIP712Domain,
@@ -451,6 +453,47 @@ class HundredXClient {
   // -------------------
   // REST AUTH endpoints
   // -------------------
+
+  public cancelOrder = async (
+    orderId: HexString,
+    productId: number,
+  ): Promise<CancelOrderReturnType> => {
+    const message = {
+      account: this.account.address,
+      orderId,
+      productId,
+      subAccountId: this.subAccountId,
+    }
+
+    try {
+      const signature = await this.#generateSignature(message, 'CancelOrder')
+
+      const { error, success } = await this.#fetchFromAPI<CancelOrder>('order', {
+        body: JSON.stringify({ ...message, signature }),
+        method: 'DELETE',
+      })
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          success,
+        }
+      }
+
+      return { success }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        success: false,
+      }
+    }
+  }
+
+  public cancelOrders = async (orders: [HexString, number][]): Promise<CancelOrderReturnType[]> => {
+    return await Promise.all(orders.map(async order => await this.cancelOrder(...order)))
+  }
 
   /**
    * Deposits a specified quantity of an asset.

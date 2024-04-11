@@ -44,6 +44,11 @@ interface BaseApiResponse {
   success: boolean
 }
 
+interface CancelOrder {
+  error?: string
+  success: boolean
+}
+
 interface KlineOptionalArgs {
   endTime?: number
   interval?: Interval
@@ -66,10 +71,10 @@ interface Kline {
 type KlinesResponse = Kline[]
 
 interface Order extends Pick<BaseApiResponse, 'error'> {
-  account: string
+  account: HexString
   createdAt: number
   expiry: number
-  id: string
+  id: HexString
   isBuy: boolean
   nonce: number
   orderType: OrderType
@@ -78,8 +83,8 @@ interface Order extends Pick<BaseApiResponse, 'error'> {
   productSymbol: string
   quantity: bigint
   residualQuantity: bigint
-  sender: string
-  signature: string
+  sender: HexString
+  signature: HexString
   status: OrderStatus
   subAccountId: number
   timeInForce: TimeInForce
@@ -144,6 +149,10 @@ interface ErrorReturnType {
   }
 }
 
+interface CancelOrderReturnType extends ErrorReturnType {
+  success: boolean
+}
+
 interface DepositReturnType extends ErrorReturnType {
   success: boolean
   transactionHash?: HexString
@@ -183,6 +192,8 @@ export {
   OrderType,
   TimeInForce,
   type BaseApiResponse,
+  type CancelOrder,
+  type CancelOrderReturnType,
   type Config,
   type DepositReturnType,
   type EIP712Domain,

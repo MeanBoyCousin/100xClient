@@ -57,7 +57,7 @@ describe('The HundredXClient', () => {
       `)
       expect(result).toEqual({
         order: {
-          account: address,
+          account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
           createdAt: 1712829961877,
           expiry: 1712421760000,
           id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f',
@@ -69,7 +69,7 @@ describe('The HundredXClient', () => {
           productSymbol: 'ethperp',
           quantity: '1000000000000000',
           residualQuantity: '0',
-          sender: address,
+          sender: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
           signature:
             '0x4e6a845046760ac9007f8ecf2e632dcc40cfd4fee6239fd7242f2c0e46a02d4b3a8dc8aa26298138c2f137a402e81f267a462edb4ab2dca0534b99179dc787da1c',
           status: 'FILLED',
@@ -189,7 +189,7 @@ describe('The HundredXClient', () => {
   })
 
   describe('placeOrders function', () => {
-    it('should allow a user to successfully place multiple orders that are both successfully and throw errors', async () => {
+    it('should allow a user to place multiple orders that are both successful and throw errors', async () => {
       fetchMock
         .mockOnce(JSON.stringify(marketFOKOrder))
         .mockOnce(JSON.stringify(customOrder))
@@ -232,7 +232,7 @@ describe('The HundredXClient', () => {
       expect(result).toEqual([
         {
           order: {
-            account: address,
+            account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
             createdAt: 1712829961877,
             expiry: 1712421760000,
             id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f',
@@ -244,7 +244,7 @@ describe('The HundredXClient', () => {
             productSymbol: 'ethperp',
             quantity: '1000000000000000',
             residualQuantity: '0',
-            sender: address,
+            sender: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
             signature:
               '0x4e6a845046760ac9007f8ecf2e632dcc40cfd4fee6239fd7242f2c0e46a02d4b3a8dc8aa26298138c2f137a402e81f267a462edb4ab2dca0534b99179dc787da1c',
             status: 'FILLED',
@@ -283,6 +283,112 @@ describe('The HundredXClient', () => {
         {
           error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
           order: {},
+        },
+      ])
+    })
+  })
+
+  describe('cancelOrder function', () => {
+    it('should allow a user to successfully cancel an order', async () => {
+      fetchMock.mockResponse(JSON.stringify({ success: true }))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.cancelOrder(
+        '0x3505c6219b1f51cf216e432b153f8637c1fa9342520bd7c780bd80dafe0eed94',
+        1002,
+      )
+      const call = fetchMock.mock.calls[0]
+
+      expect(
+        await recoverTypedDataAddress({
+          domain: Client.domain,
+          message: {
+            account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
+            orderId: '0x3505c6219b1f51cf216e432b153f8637c1fa9342520bd7c780bd80dafe0eed94',
+            productId: 1002,
+            subAccountId: 1,
+          },
+          primaryType: 'CancelOrder',
+          signature: JSON.parse(call[1]?.body as string).signature,
+          types: EIP712,
+        }),
+      ).toEqual(address)
+      expect(call).toMatchInlineSnapshot(`
+        [
+          "https://api.ciaobella.dev/v1/order",
+          {
+            "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","orderId":"0x3505c6219b1f51cf216e432b153f8637c1fa9342520bd7c780bd80dafe0eed94","productId":1002,"subAccountId":1,"signature":"0x398240c7e0542ab55b4a49ea8ad11808938365923bd7e8fc42c8d101f121c228057b6e234bfc3e330432ab0a87a21d7704d790e4611f9f6069d1929eb0071a031b"}",
+            "method": "DELETE",
+          },
+        ]
+      `)
+      expect(result).toEqual({ success: true })
+    })
+
+    it('should handle an error during the order process', async () => {
+      fetchMock.mockResponse(JSON.stringify({ error: 'A known error occurred', success: false }))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.cancelOrder(
+        '0x3505c6219b1f51cf216e432b153f8637c1fa9342520bd7c780bd80dafe0eed94',
+        1002,
+      )
+
+      expect(result).toEqual({
+        error: {
+          message: 'A known error occurred',
+        },
+        success: false,
+      })
+    })
+
+    it('should handle an unknown error', async () => {
+      fetchMock.mockReject(new Error('An unknown error occurred'))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.cancelOrder(
+        '0x3505c6219b1f51cf216e432b153f8637c1fa9342520bd7c780bd80dafe0eed94',
+        1002,
+      )
+
+      expect(result).toEqual({
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        success: false,
+      })
+    })
+  })
+
+  describe('cancelOrders function', () => {
+    it('should allow a user to cancel multiple orders that are both successful and throw errors', async () => {
+      fetchMock
+        .mockOnce(JSON.stringify({ success: true }))
+        .mockOnce(JSON.stringify({ error: 'A known error occurred', success: false }))
+        .mockReject(new Error('An unknown error occurred'))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.cancelOrders([
+        ['0x3505c6219b1f51cf216e432b153f8637c1fa9342520bd7c780bd80dafe0eed94', 1002],
+        ['0x3505c6219b1f51cf216e432b153f8637c1fa9342520bd7c780bd80dafe0eed94', 1002],
+        ['0x3505c6219b1f51cf216e432b153f8637c1fa9342520bd7c780bd80dafe0eed94', 1002],
+      ])
+
+      expect(result).toEqual([
+        {
+          success: true,
+        },
+        {
+          error: {
+            message: 'A known error occurred',
+          },
+          success: false,
+        },
+        {
+          error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+          success: false,
         },
       ])
     })
