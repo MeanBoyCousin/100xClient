@@ -53,6 +53,7 @@ import { THIRTY_DAYS } from './constants/time'
 import VERIFIER_ADDRESS from './constants/verifier'
 import { Environment, Interval, OrderType, TimeInForce } from './enums'
 import sleep from './utils/sleep'
+import toRounded from './utils/toRounded'
 
 class HundredXClient {
   readonly account: PrivateKeyAccount
@@ -134,6 +135,21 @@ class HundredXClient {
     if (environment === 'mainnet') this.#refer()
 
     Object.freeze(this)
+  }
+
+  /**
+   * Adjust a price by a specified percentage depending on order direction.
+   *
+   * @param isBuy Whether to buy (true) or sell (false).
+   * @param price The price of the order.
+   * @param slippage The percentage by which to adjust the price.
+   * @returns A new price number adjusted by the specified slippage.
+   */
+  #adjustPriceForSlippage = (isBuy: boolean, price: number, slippage: number) => {
+    const slippagePercentage = slippage / 100
+    const multiplier = isBuy ? 1 + slippagePercentage : 1 - slippagePercentage
+
+    return toRounded(price * multiplier)
   }
 
   /**
@@ -659,6 +675,7 @@ class HundredXClient {
    * @param orderArgs.productId The product identifier for the order.
    * @param orderArgs.quantity The quantity of the order.
    * @param [orderArgs.timeInForce] (Optional) The time in force for the order (default: FOK). Use the {@link TimeInForce} enum.
+   * @param [orderArgs.slippage] (Optional) The percentage by which to adjust the price when orderType is {@link OrderType.MARKET}.
    * @returns A promise that resolves to an object with either the order or an error.
    * @throws {Error} Thrown if an error occurs during the order process. The error object may contain details from the API response or a generic message.
    */
@@ -670,9 +687,13 @@ class HundredXClient {
     price,
     productId,
     quantity,
+    slippage = 2.5,
     timeInForce = TimeInForce.FOK,
   }: OrderArgs): Promise<PlaceOrderReturnType> => {
-    const bigPrice = this.#toWei(price)
+    const bigPrice =
+      orderType === OrderType.MARKET
+        ? this.#toWei(this.#adjustPriceForSlippage(isBuy, price, slippage))
+        : this.#toWei(price)
     const bigQuantity = this.#toWei(quantity)
 
     const sharedParams = {

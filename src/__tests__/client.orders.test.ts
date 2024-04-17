@@ -36,7 +36,7 @@ describe('The HundredXClient', () => {
             expiration: 17098300192000000n,
             nonce: 17098297600000000n,
             orderType: 2,
-            price: 3450000000000000000000n,
+            price: 3536240000000000000000n,
             productId: 1002,
             quantity: 1000000000000000n,
             subAccountId: 1,
@@ -51,7 +51,7 @@ describe('The HundredXClient', () => {
         [
           "https://api.staging.100x.finance/v1/order",
           {
-            "body": "{"expiration":17098300192000000,"nonce":17098297600000000,"price":"3450000000000000000000","quantity":"1000000000000000","signature":"0xefc956696ae87d1078a2f2a007fa762955489d5eec454b76f80ac41b17ab6f084416bdff779f8e904824dd000544c0335062cd4e429e6683e64173be4c389a9e1c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":2,"productId":1002,"subAccountId":1,"timeInForce":1}",
+            "body": "{"expiration":17098300192000000,"nonce":17098297600000000,"price":"3536240000000000000000","quantity":"1000000000000000","signature":"0x84615a737a4b28ef97ea1b04d7df4558c04dfba83264e75587f89234156c81f544b3c7703d0ee8cbd1581ca49fa7c2bfd53a0b4a0c63f6b5d7b852ff3f0fa15f1c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":2,"productId":1002,"subAccountId":1,"timeInForce":1}",
             "method": "POST",
           },
         ]
@@ -148,6 +148,33 @@ describe('The HundredXClient', () => {
           timeInForce: 2,
         },
       })
+    })
+
+    it('should allow a user to specify slippage', async () => {
+      fetchMock.mockResponse(JSON.stringify(marketFOKOrder))
+
+      const Client = new HundredXClient(privateKey)
+
+      await Client.placeOrder({
+        isBuy: true,
+        price: 3450,
+        productId: 1002,
+        quantity: 0.001,
+        slippage: 1,
+      })
+      await Client.placeOrder({
+        isBuy: false,
+        price: 3450,
+        productId: 1002,
+        quantity: 0.001,
+        slippage: 1,
+      })
+
+      const buyPrice = JSON.parse(fetchMock.mock.calls[0][1]?.body as string).price
+      const sellPrice = JSON.parse(fetchMock.mock.calls[1][1]?.body as string).price
+
+      expect(buyPrice).toEqual('3484500000000000000000')
+      expect(sellPrice).toEqual('3415500000000000000000')
     })
 
     it('should handle an error during the order process', async () => {

@@ -35,6 +35,7 @@ interface OrderArgs {
   price: number
   productId: number
   quantity: number
+  slippage?: number
   timeInForce?: TimeInForce
 }
 
@@ -135,6 +136,7 @@ interface Ticker {
   oraclePrice: bigint
   priceChange: bigint
   priceChangePercent: string
+  productId: number
   productSymbol: string
   volume: bigint
 }
