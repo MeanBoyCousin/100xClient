@@ -21,6 +21,7 @@ import type {
   ProductReturnType,
   ProductsResponse,
   ProductsReturnType,
+  ReplacementOrderArgs,
   ServerTimeResponse,
   ServerTimeReturnType,
   TickerResponse,
@@ -473,6 +474,89 @@ class HundredXClient {
   // -------------------
 
   /**
+   * Cancels and replaces an order on the exchange.
+   * Replaced orders enforce an order type of {@link OrderType.LIMIT_MAKER} and a time in force of {@link TimeInForce.GTC}.
+   *
+   * {@link https://100x.readme.io/reference/cancel-and-replace-trade}
+   *
+   * @param orderId The Id of the order to replace.
+   * @param orderArgs The order arguments.
+   * @param [orderArgs.expiration] (Optional) The expiration time of the order in milliseconds (default: now + 30 days).
+   * @param orderArgs.isBuy Whether to buy (true) or sell (false).
+   * @param [orderArgs.nonce] (Optional) A unique identifier for the order. (default: current unix timestamp in nano seconds).
+   * @param orderArgs.price The price of the order.
+   * @param orderArgs.productId The product identifier for the order.
+   * @param orderArgs.quantity The quantity of the order.
+   * @returns A promise that resolves to an object with either the new order or an error.
+   * @throws {Error} Thrown if an error occurs during the order process. The error object may contain details from the API response or a generic message.
+   */
+  public cancelAndReplaceOrder = async (
+    orderId: HexString,
+    {
+      expiration = this.#getCurrentTimestamp() + THIRTY_DAYS,
+      isBuy,
+      nonce = this.#getCurrentTimestamp(),
+      price,
+      productId,
+      quantity,
+    }: ReplacementOrderArgs,
+  ): Promise<PlaceOrderReturnType> => {
+    const bigPrice = this.#toWei(price)
+    const bigQuantity = this.#toWei(quantity)
+
+    const sharedParams = {
+      account: this.account.address,
+      isBuy,
+      orderType: OrderType.LIMIT_MAKER,
+      productId,
+      subAccountId: this.subAccountId,
+      timeInForce: TimeInForce.GTC,
+    }
+    const message = {
+      expiration: BigInt(expiration),
+      nonce: BigInt(nonce),
+      price: bigPrice,
+      quantity: bigQuantity,
+      ...sharedParams,
+    }
+
+    try {
+      const signature = await this.#generateSignature(message, 'Order')
+
+      const { error, ...order } = await this.#fetchFromAPI<Order>('order/cancel-and-replace', {
+        body: JSON.stringify({
+          idToCancel: orderId,
+          newOrder: {
+            expiration,
+            nonce,
+            price: bigPrice.toString(),
+            quantity: bigQuantity.toString(),
+            signature,
+            ...sharedParams,
+          },
+        }),
+        method: 'POST',
+      })
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          order: {},
+        }
+      }
+
+      return { order }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        order: {},
+      }
+    }
+  }
+
+  /**
    * Cancel all open orders for a specific product.
    *
    * {@link https://100x.readme.io/reference/cancel-all-open-orders-trade}
@@ -669,7 +753,7 @@ class HundredXClient {
    * @param orderArgs The order arguments.
    * @param [orderArgs.expiration] (Optional) The expiration time of the order in milliseconds (default: now + 30 days).
    * @param orderArgs.isBuy Whether to buy (true) or sell (false).
-   * @param [orderArgs.nonce] (Optional) A unique identifier for the order. (default: current unix timestamp in ms).
+   * @param [orderArgs.nonce] (Optional) A unique identifier for the order. (default: current unix timestamp in nano seconds).
    * @param [orderArgs.orderType] (Optional) The type of order (default: market). Use the {@link OrderType} enum.
    * @param orderArgs.price The price of the order.
    * @param orderArgs.productId The product identifier for the order.

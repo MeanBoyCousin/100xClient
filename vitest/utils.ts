@@ -1,3 +1,5 @@
+import type { HexString } from 'src/types'
+
 // User variables.
 export const address = '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8'
 export const privateKey = '0xa608cd43cbc3d59bc51443f475b96a4654e956d6cc91783598a8e76a34000174'
@@ -176,7 +178,7 @@ export const ethOrderBook = {
 }
 
 export const marketFOKOrder = {
-  id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f',
+  id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f' as HexString,
   productId: 1002,
   productSymbol: 'ethperp',
   account: address,
@@ -202,4 +204,25 @@ export const customOrder = {
   timeInForce: 2,
   nonce: 123,
   expiry: 1800000000000,
+}
+
+export const replacementOrder = {
+  id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f' as HexString,
+  productId: 1002,
+  productSymbol: 'ethperp',
+  account: address,
+  subAccountId: 1,
+  isBuy: true,
+  orderType: 1,
+  timeInForce: 0,
+  price: '3455000000000000000000',
+  quantity: '1000000000000000',
+  nonce: 1712421760000,
+  sender: address,
+  signature:
+    '0x099fd784840218f0df8cf557e6a42ba8d26f6c8588a22b69f34f6d3e2705714a1d3bb8238a0a21ff824b77920691a7e926a02b2d8ebe8accf62895027b8417fd1c',
+  expiry: 1712421760000,
+  createdAt: 1712829961877,
+  status: 'OPEN',
+  residualQuantity: '1000000000000000',
 }
