@@ -33,7 +33,7 @@ describe('The HundredXClient', () => {
           message: {
             account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
             isBuy: true,
-            expiration: 17098300192000000n,
+            expiration: 1712421760000n,
             nonce: 17098297600000000n,
             orderType: 2,
             price: 3536240000000000000000n,
@@ -51,7 +51,7 @@ describe('The HundredXClient', () => {
         [
           "https://api.staging.100x.finance/v1/order",
           {
-            "body": "{"expiration":17098300192000000,"nonce":17098297600000000,"price":"3536240000000000000000","quantity":"1000000000000000","signature":"0x84615a737a4b28ef97ea1b04d7df4558c04dfba83264e75587f89234156c81f544b3c7703d0ee8cbd1581ca49fa7c2bfd53a0b4a0c63f6b5d7b852ff3f0fa15f1c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":2,"productId":1002,"subAccountId":1,"timeInForce":1}",
+            "body": "{"expiration":1712421760000,"nonce":17098297600000000,"price":"3536240000000000000000","quantity":"1000000000000000","signature":"0x90c49b3eaef966462164fbb2d47f97eff274501ceff38f2c70586983d6c66e5e409497f66435feb0dcc5c3528bbca95c099090104375ca4c66ab41edd8e58f341c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":2,"productId":1002,"subAccountId":1,"timeInForce":1}",
             "method": "POST",
           },
         ]
@@ -505,7 +505,7 @@ describe('The HundredXClient', () => {
           message: {
             account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
             isBuy: true,
-            expiration: 17098300192000000n,
+            expiration: 1712421760000n,
             nonce: 17098297600000000n,
             orderType: 1,
             price: 3455000000000000000000n,
@@ -523,7 +523,7 @@ describe('The HundredXClient', () => {
         [
           "https://api.ciaobella.dev/v1/order/cancel-and-replace",
           {
-            "body": "{"idToCancel":"0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f","newOrder":{"expiration":17098300192000000,"nonce":17098297600000000,"price":"3455000000000000000000","quantity":"1000000000000000","signature":"0x099fd784840218f0df8cf557e6a42ba8d26f6c8588a22b69f34f6d3e2705714a1d3bb8238a0a21ff824b77920691a7e926a02b2d8ebe8accf62895027b8417fd1c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":1,"productId":1002,"subAccountId":1,"timeInForce":0}}",
+            "body": "{"idToCancel":"0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f","newOrder":{"expiration":1712421760000,"nonce":17098297600000000,"price":"3455000000000000000000","quantity":"1000000000000000","signature":"0x6235832ac08693d6cfaba12a4ae9918eabf3ec057500e15c632f0dca7eaa0b1c419353fa8368ec6f009c085683575fa8a8057223fa267e350c0284e33f181e011c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":1,"productId":1002,"subAccountId":1,"timeInForce":0}}",
             "method": "POST",
           },
         ]
