@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 
 const config = defineConfig({
   resolve: {
@@ -35,6 +35,9 @@ const config = defineConfig({
     environment: 'node',
     globals: true,
     setupFiles: '../vitest/vitest.setup.ts',
+    fakeTimers: {
+      toFake: [...(configDefaults.fakeTimers.toFake ?? []), 'performance'],
+    },
   },
 })
 

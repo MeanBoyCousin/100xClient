@@ -3,10 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import HundredXClient from 'src'
 import EIP712 from 'src/ABI/EIP712'
-import { USDB, privateKey } from 'vitest/utils'
+import { USDB, address, privateKey } from 'vitest/utils'
 
 describe('The HundredXClient withdraw function', () => {
   beforeEach(() => {
+    vi.useFakeTimers()
     vi.setSystemTime(1709829760000)
   })
 
@@ -25,19 +26,19 @@ describe('The HundredXClient withdraw function', () => {
           account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
           asset: USDB,
           subAccountId: 1,
-          nonce: 1709829760000n,
+          nonce: 17098297600000000n,
           quantity: 100000000000000000000n,
         },
         primaryType: 'Withdraw',
         signature: JSON.parse(call[1]?.body as string).signature,
         types: EIP712,
       }),
-    ).toEqual('0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8')
+    ).toEqual(address)
     expect(call).toMatchInlineSnapshot(`
       [
         "https://api.ciaobella.dev/v1/withdraw",
         {
-          "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","asset":"0x79a59c326c715ac2d31c169c85d1232319e341ce","subAccountId":1,"nonce":1709829760000,"quantity":"100000000000000000000","signature":"0xb73989bc4a7f61f830194483004a8b71865baa2559103ec34fcc106015a7aa5a3f8f47c191838a5e805eca92381df816bf2f96f6228175f0161bfaec4a9091331c"}",
+          "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","asset":"0x79a59c326c715ac2d31c169c85d1232319e341ce","subAccountId":1,"nonce":17098297600000000,"quantity":"100000000000000000000","signature":"0x114822252331056162f0d4c5d7c703dd14aec0b2cc01c28bbdead3963735c68660ad5d2868e8f8f88e98855cab9caa4eb48f9da05308b6c11100d1d8f6c227df1c"}",
           "method": "POST",
         },
       ]
