@@ -207,11 +207,18 @@ class HundredXClient {
   }
 
   /**
-   * Gets the current timestamp in nanoseconds.
+   * Gets the current timestamp.
+   *
+   * @returns The current timestamp in milliseconds.
+   */
+  #getCurrentTimestamp = (): number => Date.now()
+
+  /**
+   * Generates a nonce.
    *
    * @returns The current timestamp in nanoseconds.
    */
-  #getCurrentTimestamp = (): number => Math.floor((Date.now() + performance.now()) * 10000)
+  #getNonce = (): number => Math.floor((Date.now() + performance.now()) * 10000)
 
   /**
    * Private method to refer the user on class initialisation.
@@ -495,7 +502,7 @@ class HundredXClient {
     {
       expiration = this.#getCurrentTimestamp() + THIRTY_DAYS,
       isBuy,
-      nonce = this.#getCurrentTimestamp(),
+      nonce = this.#getNonce(),
       price,
       productId,
       quantity,
@@ -766,7 +773,7 @@ class HundredXClient {
   public placeOrder = async ({
     expiration = this.#getCurrentTimestamp() + THIRTY_DAYS,
     isBuy,
-    nonce = this.#getCurrentTimestamp(),
+    nonce = this.#getNonce(),
     orderType = OrderType.MARKET,
     price,
     productId,
@@ -857,7 +864,7 @@ class HundredXClient {
     this.#logger.info({ msg: `Withdrawing ${quantity} ${asset}...` })
 
     const bigQuantity = this.#toWei(quantity)
-    const nonce = this.#getCurrentTimestamp()
+    const nonce = this.#getNonce()
 
     const sharedParams = {
       account: this.account.address,
