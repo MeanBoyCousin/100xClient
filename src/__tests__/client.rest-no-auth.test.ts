@@ -7,6 +7,7 @@ import { klines, privateKey, productsData, tickers, ethOrderBook } from 'vitest/
 describe('The HundredXClient REST', () => {
   beforeEach(() => {
     fetchMock.resetMocks()
+    vi.useFakeTimers()
     vi.setSystemTime(1709829760000)
   })
 

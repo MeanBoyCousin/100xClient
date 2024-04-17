@@ -190,11 +190,11 @@ class HundredXClient {
   }
 
   /**
-   * Gets the current timestamp in milliseconds.
+   * Gets the current timestamp in nanoseconds.
    *
-   * @returns The current timestamp in milliseconds.
+   * @returns The current timestamp in nanoseconds.
    */
-  #getCurrentTimestamp = (): number => Date.now()
+  #getCurrentTimestamp = (): number => Math.floor((Date.now() + performance.now()) * 10000)
 
   /**
    * Private method to refer the user on class initialisation.
@@ -316,7 +316,7 @@ class HundredXClient {
         }
       }
 
-      if (Number(optionalArgs.startTime) > this.#getCurrentTimestamp()) {
+      if (Number(optionalArgs.startTime) > Date.now()) {
         return {
           error: { message: 'Start time cannot be in the future.' },
           klines: [],
