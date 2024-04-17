@@ -39,6 +39,8 @@ interface OrderArgs {
   timeInForce?: TimeInForce
 }
 
+interface ReplacementOrderArgs extends Omit<OrderArgs, 'orderType' | 'timeInForce' | 'slippage'> {}
+
 // API response types
 interface BaseApiResponse {
   error?: string
@@ -218,6 +220,7 @@ export {
   type ProductReturnType,
   type ProductsResponse,
   type ProductsReturnType,
+  type ReplacementOrderArgs,
   type ServerTimeResponse,
   type ServerTimeReturnType,
   type TickerResponse,
