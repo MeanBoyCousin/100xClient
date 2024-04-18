@@ -226,3 +226,13 @@ export const replacementOrder = {
   status: 'OPEN',
   residualQuantity: '1000000000000000',
 }
+
+export const mockBalances = [
+  {
+    account: '0x23a90125d8b71a6f18c905d1cce0579b3e589f90',
+    subaccount: 1,
+    asset: '0x79a59c326c715ac2d31c169c85d1232319e341ce',
+    quantity: '100000000000000000000',
+    pendingWithdrawal: '0',
+  },
+]
