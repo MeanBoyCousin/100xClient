@@ -17,6 +17,10 @@ enum Interval {
   '1W' = '1w',
 }
 
+enum MarginAssets {
+  USDB = 'USDB',
+}
+
 enum OrderStatus {
   CANCELED = 'CANCELLED',
   EXPIRED = 'EXPIRED',
@@ -38,4 +42,4 @@ enum TimeInForce {
   IOC = 2,
 }
 
-export { Environment, Interval, OrderStatus, OrderType, TimeInForce }
+export { Environment, Interval, MarginAssets, OrderStatus, OrderType, TimeInForce }

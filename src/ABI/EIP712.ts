@@ -125,6 +125,16 @@ const EIP712 = {
       type: 'string',
     },
   ],
+  SignedAuthentication: [
+    {
+      name: 'account',
+      type: 'address',
+    },
+    {
+      name: 'subAccountId',
+      type: 'uint8',
+    },
+  ],
 } as const satisfies TypedData
 
 export default EIP712

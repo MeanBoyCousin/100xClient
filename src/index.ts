@@ -27,6 +27,8 @@ import type {
   TickerResponse,
   TickerReturnType,
   WithdrawReturnType,
+  Balance,
+  BalancesReturnType,
 } from './types'
 import type { Logger } from 'pino'
 import type { PrivateKeyAccount, PublicClient, WalletClient } from 'viem'
@@ -52,7 +54,7 @@ import CIAO_ADDRESS from './constants/ciao'
 import MARGIN_ASSETS from './constants/marginAssets'
 import { THIRTY_DAYS } from './constants/time'
 import VERIFIER_ADDRESS from './constants/verifier'
-import { Environment, Interval, OrderType, TimeInForce } from './enums'
+import { Environment, Interval, OrderType, TimeInForce, MarginAssets } from './enums'
 import sleep from './utils/sleep'
 import toRounded from './utils/toRounded'
 
@@ -748,6 +750,59 @@ class HundredXClient {
       return {
         error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
         success: false,
+      }
+    }
+  }
+
+  /**
+   * List all margin balances for the account and sub-account.
+   *
+   * {@link https://100x.readme.io/reference/get-spot-position}
+   *
+   * Note: The `asset` key for each balance object will match one of the values found in the {@link MarginAssets} enum.
+   *
+   * @returns A promise that resolves to an object with either the list of balances or an error.
+   * @throws {Error} Thrown if an error occurs fetching the data. The error object may contain details from the API response or a generic message.
+   */
+  public listBalances = async (): Promise<BalancesReturnType> => {
+    try {
+      const signature = await this.#generateSignature(
+        { account: this.account.address, subAccountId: this.subAccountId },
+        'SignedAuthentication',
+      )
+
+      const addressToKeyMap = Object.entries(MARGIN_ASSETS[this.environment]).reduce(
+        (map, [key, address]) => ({
+          ...map,
+          [address]: key,
+        }),
+        {} as Record<HexString, MarginAssetKey>,
+      )
+      const response = await this.#fetchFromAPI<Required<BaseApiResponse> | Balance[]>(
+        `balances?account=${this.account.address}&signature=${signature}&subAccountId=${this.subAccountId}`,
+      )
+
+      if (!Array.isArray(response)) {
+        this.#logger.error({ msg: response.error })
+        return {
+          balances: [],
+          error: { message: response.error },
+        }
+      }
+
+      return {
+        balances: response.map(({ asset, pendingWithdrawal, quantity }) => ({
+          address: asset,
+          asset: addressToKeyMap[asset],
+          pendingWithdrawal,
+          quantity,
+        })),
+      }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        balances: [],
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
       }
     }
   }

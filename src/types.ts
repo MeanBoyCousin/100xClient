@@ -1,3 +1,4 @@
+import type { MarginAssetKey } from 'src/constants/marginAssets'
 import type {
   Environment as EnvironmentEnum,
   Interval,
@@ -45,6 +46,12 @@ interface ReplacementOrderArgs extends Omit<OrderArgs, 'orderType' | 'timeInForc
 interface BaseApiResponse {
   error?: string
   success: boolean
+}
+
+interface Balance {
+  asset: HexString
+  quantity: bigint
+  pendingWithdrawal: bigint
 }
 
 interface CancelOrder extends BaseApiResponse {}
@@ -152,6 +159,15 @@ interface ErrorReturnType {
   }
 }
 
+interface BalancesReturnType extends ErrorReturnType {
+  balances: {
+    address: HexString
+    asset: MarginAssetKey
+    quantity: bigint
+    pendingWithdrawal: bigint
+  }[]
+}
+
 interface CancelOrderReturnType extends ErrorReturnType {
   success: boolean
 }
@@ -198,6 +214,8 @@ interface WithdrawReturnType extends ErrorReturnType {
 export {
   OrderType,
   TimeInForce,
+  type Balance,
+  type BalancesReturnType,
   type BaseApiResponse,
   type CancelOrder,
   type CancelOrderReturnType,
