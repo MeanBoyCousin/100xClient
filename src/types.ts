@@ -26,6 +26,8 @@ type Environment = EnvironmentEnum
 
 type HexString = `0x${string}`
 
+type ProductSymbol = `${string}perp`
+
 // Method param types
 
 interface OrderArgs {
@@ -89,7 +91,7 @@ interface Order extends Pick<BaseApiResponse, 'error'> {
   orderType: OrderType
   price: bigint
   productId: number
-  productSymbol: string
+  productSymbol: ProductSymbol
   quantity: bigint
   residualQuantity: bigint
   sender: HexString
@@ -146,7 +148,7 @@ interface Ticker {
   priceChange: bigint
   priceChangePercent: string
   productId: number
-  productSymbol: string
+  productSymbol: ProductSymbol
   volume: bigint
 }
 type TickerResponse = Ticker[]
@@ -238,6 +240,7 @@ export {
   type ProductReturnType,
   type ProductsResponse,
   type ProductsReturnType,
+  type ProductSymbol,
   type ReplacementOrderArgs,
   type ServerTimeResponse,
   type ServerTimeReturnType,
