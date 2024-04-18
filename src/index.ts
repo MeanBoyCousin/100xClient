@@ -14,6 +14,7 @@ import type {
   KlineOptionalArgs,
   KlinesResponse,
   KlinesReturnType,
+  OpenOrdersReturnType,
   Order,
   OrderArgs,
   OrderBookResponse,
@@ -821,6 +822,48 @@ class HundredXClient {
       return {
         balances: [],
         error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+      }
+    }
+  }
+
+  /**
+   * List all open orders for the account and sub-account.
+   * An optional product symbol can be passed to limit the results to just that product.
+   *
+   * {@link https://100x.readme.io/reference/list-open-orders}
+   *
+   * @param [productSymbol] (Optional) A specific product symbol to fetch positions for.
+   * @returns A promise that resolves to an object with either the list of open orders or an error.
+   * @throws {Error} Thrown if an error occurs fetching the data. The error object may contain details from the API response or a generic message.
+   */
+  public listOpenOrders = async (productSymbol?: ProductSymbol): Promise<OpenOrdersReturnType> => {
+    try {
+      const signature = await this.#generateSignedAuthentication()
+
+      const params = new URLSearchParams({
+        account: this.account.address,
+        signature,
+        subAccountId: this.subAccountId.toString(),
+        ...(productSymbol ? { symbol: productSymbol } : {}),
+      })
+      const response = await this.#fetchFromAPI<Required<BaseApiResponse> | Order[]>(
+        `openOrders?${params.toString()}`,
+      )
+
+      if (!Array.isArray(response)) {
+        this.#logger.error({ msg: response.error })
+        return {
+          error: { message: response.error },
+          orders: [],
+        }
+      }
+
+      return { orders: response }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        orders: [],
       }
     }
   }

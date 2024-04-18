@@ -271,3 +271,27 @@ export const mockPositions = [
     currentCumFunding: '50840989198196999',
   },
 ]
+
+export const mockOpenOrders = [
+  {
+    id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158fu',
+    productId: 1006,
+    productSymbol: 'blastperp',
+    account: address,
+    subAccountId: 1,
+    isBuy: true,
+    orderType: 0,
+    timeInForce: 0,
+    price: '4698000000000000000',
+    quantity: '6500000000000000000',
+    nonce: 1712421760000,
+    sender: address,
+    signature:
+      '0xeb1965e2504cadf99f13512273dbff1092fd514b4f7143d01e6f5939f5d0131775354ba3b0dd1a8c527fc1d2754e7a4868b934b93dde440e3d3d576212b5093e1c',
+    expiry: 1712421760000,
+    createdAt: 1712829961877,
+    status: 'OPEN',
+    residualQuantity: '6500000000000000000',
+  },
+  replacementOrder,
+]
