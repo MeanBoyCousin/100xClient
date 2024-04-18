@@ -209,6 +209,19 @@ class HundredXClient {
   }
 
   /**
+   * Generates a signature for the EIP712 type `SignedAuthentication`.
+   *
+   * @returns A promise that resolves to the generated signature as a hex string.
+   * @throws {Error} - If there is an error during the signing process.
+   */
+  #generateSignedAuthentication = async (): Promise<HexString> => {
+    return await this.#generateSignature(
+      { account: this.account.address, subAccountId: this.subAccountId },
+      'SignedAuthentication',
+    )
+  }
+
+  /**
    * Gets the current timestamp.
    *
    * @returns The current timestamp in milliseconds.
@@ -766,10 +779,7 @@ class HundredXClient {
    */
   public listBalances = async (): Promise<BalancesReturnType> => {
     try {
-      const signature = await this.#generateSignature(
-        { account: this.account.address, subAccountId: this.subAccountId },
-        'SignedAuthentication',
-      )
+      const signature = await this.#generateSignedAuthentication()
 
       const addressToKeyMap = Object.entries(MARGIN_ASSETS[this.environment]).reduce(
         (map, [key, address]) => ({
@@ -778,8 +788,13 @@ class HundredXClient {
         }),
         {} as Record<HexString, MarginAssetKey>,
       )
+      const params = new URLSearchParams({
+        account: this.account.address,
+        signature,
+        subAccountId: this.subAccountId.toString(),
+      })
       const response = await this.#fetchFromAPI<Required<BaseApiResponse> | Balance[]>(
-        `balances?account=${this.account.address}&signature=${signature}&subAccountId=${this.subAccountId}`,
+        `balances?${params.toString()}`,
       )
 
       if (!Array.isArray(response)) {
