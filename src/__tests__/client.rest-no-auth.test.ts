@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import HundredXClient from 'src'
+import { Interval } from 'src/enums'
 import { klines, privateKey, productsData, tickers, ethOrderBook } from 'vitest/utils'
 
 describe('The HundredXClient REST', () => {
   beforeEach(() => {
     fetchMock.resetMocks()
+    vi.useFakeTimers()
     vi.setSystemTime(1709829760000)
   })
 
@@ -280,7 +282,7 @@ describe('The HundredXClient REST', () => {
 
       await Client.getKlines('ethperp', {
         endTime: Date.now(),
-        interval: '4h',
+        interval: Interval['4H'],
         limit: 1000,
         startTime: Date.now() - 72000000,
       })

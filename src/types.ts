@@ -1,3 +1,11 @@
+import type {
+  Environment as EnvironmentEnum,
+  Interval,
+  OrderStatus,
+  OrderType,
+  TimeInForce,
+} from 'src/enums'
+
 // Config & common types
 interface Config {
   debug?: boolean
@@ -13,9 +21,25 @@ interface EIP712Domain {
   verifyingContract: HexString
 }
 
-type Environment = 'mainnet' | 'testnet'
+type Environment = EnvironmentEnum
 
 type HexString = `0x${string}`
+
+// Method param types
+
+interface OrderArgs {
+  expiration?: number
+  isBuy: boolean
+  nonce?: number
+  orderType?: OrderType
+  price: number
+  productId: number
+  quantity: number
+  slippage?: number
+  timeInForce?: TimeInForce
+}
+
+interface ReplacementOrderArgs extends Omit<OrderArgs, 'orderType' | 'timeInForce' | 'slippage'> {}
 
 // API response types
 interface BaseApiResponse {
@@ -23,9 +47,13 @@ interface BaseApiResponse {
   success: boolean
 }
 
+interface CancelOrder extends BaseApiResponse {}
+
+interface CancelOrders extends CancelOrder {}
+
 interface KlineOptionalArgs {
   endTime?: number
-  interval?: '1m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '8h' | '1d' | '3d' | '1w'
+  interval?: Interval
   limit?: number
   startTime?: number
 }
@@ -43,6 +71,26 @@ interface Kline {
   x: boolean
 }
 type KlinesResponse = Kline[]
+
+interface Order extends Pick<BaseApiResponse, 'error'> {
+  account: HexString
+  createdAt: number
+  expiry: number
+  id: HexString
+  isBuy: boolean
+  nonce: number
+  orderType: OrderType
+  price: bigint
+  productId: number
+  productSymbol: string
+  quantity: bigint
+  residualQuantity: bigint
+  sender: HexString
+  signature: HexString
+  status: OrderStatus
+  subAccountId: number
+  timeInForce: TimeInForce
+}
 
 type OrderBookRow = [bigint, bigint, bigint]
 interface OrderBookResponse {
@@ -90,6 +138,7 @@ interface Ticker {
   oraclePrice: bigint
   priceChange: bigint
   priceChangePercent: string
+  productId: number
   productSymbol: string
   volume: bigint
 }
@@ -103,6 +152,14 @@ interface ErrorReturnType {
   }
 }
 
+interface CancelOrderReturnType extends ErrorReturnType {
+  success: boolean
+}
+
+interface CancelOrdersReturnType extends ErrorReturnType {
+  success: boolean
+}
+
 interface DepositReturnType extends ErrorReturnType {
   success: boolean
   transactionHash?: HexString
@@ -113,6 +170,10 @@ interface KlinesReturnType extends ErrorReturnType {
 }
 
 interface OrderBookReturnType extends ErrorReturnType, OrderBookResponse {}
+
+interface PlaceOrderReturnType extends ErrorReturnType {
+  order: Omit<Order, 'error'> | {}
+}
 
 interface ProductReturnType extends ErrorReturnType {
   product: ProductResponse | {}
@@ -135,7 +196,13 @@ interface WithdrawReturnType extends ErrorReturnType {
 }
 
 export {
+  OrderType,
+  TimeInForce,
   type BaseApiResponse,
+  type CancelOrder,
+  type CancelOrderReturnType,
+  type CancelOrders,
+  type CancelOrdersReturnType,
   type Config,
   type DepositReturnType,
   type EIP712Domain,
@@ -144,12 +211,16 @@ export {
   type KlineOptionalArgs,
   type KlinesResponse,
   type KlinesReturnType,
+  type Order,
+  type OrderArgs,
   type OrderBookResponse,
   type OrderBookReturnType,
+  type PlaceOrderReturnType,
   type ProductResponse,
   type ProductReturnType,
   type ProductsResponse,
   type ProductsReturnType,
+  type ReplacementOrderArgs,
   type ServerTimeResponse,
   type ServerTimeReturnType,
   type TickerResponse,

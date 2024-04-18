@@ -1,20 +1,27 @@
 import type { MarginAssetKey } from './constants/marginAssets'
 import type {
   BaseApiResponse,
+  CancelOrder,
+  CancelOrderReturnType,
+  CancelOrders,
+  CancelOrdersReturnType,
   Config,
   DepositReturnType,
   EIP712Domain,
-  Environment,
   HexString,
   KlineOptionalArgs,
   KlinesResponse,
   KlinesReturnType,
+  Order,
+  OrderArgs,
   OrderBookResponse,
   OrderBookReturnType,
+  PlaceOrderReturnType,
   ProductResponse,
   ProductReturnType,
   ProductsResponse,
   ProductsReturnType,
+  ReplacementOrderArgs,
   ServerTimeResponse,
   ServerTimeReturnType,
   TickerResponse,
@@ -31,6 +38,7 @@ import {
   createPublicClient,
   createWalletClient,
   http,
+  parseEther,
 } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { eip712WalletActions } from 'viem/zksync'
@@ -42,8 +50,11 @@ import API_URL from './constants/api'
 import CHAINS from './constants/chains'
 import CIAO_ADDRESS from './constants/ciao'
 import MARGIN_ASSETS from './constants/marginAssets'
+import { THIRTY_DAYS } from './constants/time'
 import VERIFIER_ADDRESS from './constants/verifier'
+import { Environment, Interval, OrderType, TimeInForce } from './enums'
 import sleep from './utils/sleep'
+import toRounded from './utils/toRounded'
 
 class HundredXClient {
   readonly account: PrivateKeyAccount
@@ -67,15 +78,15 @@ class HundredXClient {
    *
    * @param privateKey The private key used to sign transactions.
    * @param [config] (Optional) Configuration options.
-   * @param [config.debug] Enable debug mode.
-   * @param [config.environment] The environment to use (default: testnet).
-   * @param [config.rpc] The RPC URL to use.
-   * @param [config.subAccountId] The sub-account ID to use (default: 1).
+   * @param [config.debug] (Optional) Enable debug mode.
+   * @param [config.environment] (Optional) The environment to use (default: testnet). Use the {@link Environment} enum.
+   * @param [config.rpc] (Optional) The RPC URL to use.
+   * @param [config.subAccountId] (Optional) The sub-account ID to use (default: 1).
    * @throws {Error} If the provided private key is invalid.
    */
   constructor(privateKey: HexString, config?: Config) {
     const debug = config?.debug || false
-    const environment = config?.environment || 'testnet'
+    const environment = config?.environment || Environment.TESTNET
     const rpc = config?.rpc || CHAINS[environment].rpcUrls.default.http[0]
     const subAccountId = config?.subAccountId ?? 1
 
@@ -125,6 +136,21 @@ class HundredXClient {
     if (environment === 'mainnet') this.#refer()
 
     Object.freeze(this)
+  }
+
+  /**
+   * Adjust a price by a specified percentage depending on order direction.
+   *
+   * @param isBuy Whether to buy (true) or sell (false).
+   * @param price The price of the order.
+   * @param slippage The percentage by which to adjust the price.
+   * @returns A new price number adjusted by the specified slippage.
+   */
+  #adjustPriceForSlippage = (isBuy: boolean, price: number, slippage: number) => {
+    const slippagePercentage = slippage / 100
+    const multiplier = isBuy ? 1 + slippagePercentage : 1 - slippagePercentage
+
+    return toRounded(price * multiplier)
   }
 
   /**
@@ -181,11 +207,18 @@ class HundredXClient {
   }
 
   /**
-   * Gets the current timestamp in milliseconds.
+   * Gets the current timestamp.
    *
    * @returns The current timestamp in milliseconds.
    */
   #getCurrentTimestamp = (): number => Date.now()
+
+  /**
+   * Generates a nonce.
+   *
+   * @returns The current timestamp in nanoseconds.
+   */
+  #getNonce = (): number => Math.floor((Date.now() + performance.now()) * 10000)
 
   /**
    * Private method to refer the user on class initialisation.
@@ -212,7 +245,7 @@ class HundredXClient {
    * @param value The decimal number representing the quantity in Ether.
    * @returns The equivalent value in Wei as a BigInt.
    */
-  #toWei = (value: number): bigint => BigInt(value * 1e18)
+  #toWei = (value: number): bigint => parseEther(value.toString())
 
   /**
    * Waits for a transaction on the blockchain to be mined and included in a block.
@@ -281,11 +314,10 @@ class HundredXClient {
    *
    * @param productSymbol The product symbol to get data for (btcperp, ethperp, etc.).
    * @param [optionalArgs] (Optional) Query parameters.
-   * @param optionalArgs.endTime The end time range to query in unix milliseconds.
-   * @param optionalArgs.interval The time interval for each K-line.
-   * Options are '1m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '8h' | '1d' | '3d' | '1w'.
-   * @param optionalArgs.limit The amount of K-lines to fetch. Should be between 1 & 1000 inclusive.
-   * @param optionalArgs.startTime The start time range to query in unix milliseconds.
+   * @param [optionalArgs.endTime] (Optional) The end time range to query in unix milliseconds.
+   * @param [optionalArgs.interval] (Optional) The time interval for each K-line. Use the {@link Interval} enum.
+   * @param [optionalArgs.limit] (Optional) The amount of K-lines to fetch. Should be between 1 & 1000 inclusive.
+   * @param [optionalArgs.startTime] (Optional) The start time range to query in unix milliseconds.
    * @returns A promise that resolves with an object containing the K-line data, or an error object.
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
@@ -308,7 +340,7 @@ class HundredXClient {
         }
       }
 
-      if (Number(optionalArgs.startTime) > this.#getCurrentTimestamp()) {
+      if (Number(optionalArgs.startTime) > Date.now()) {
         return {
           error: { message: 'Start time cannot be in the future.' },
           klines: [],
@@ -449,6 +481,194 @@ class HundredXClient {
   // -------------------
 
   /**
+   * Cancels and replaces an order on the exchange.
+   * Replaced orders enforce an order type of {@link OrderType.LIMIT_MAKER} and a time in force of {@link TimeInForce.GTC}.
+   *
+   * {@link https://100x.readme.io/reference/cancel-and-replace-trade}
+   *
+   * @param orderId The Id of the order to replace.
+   * @param orderArgs The order arguments.
+   * @param [orderArgs.expiration] (Optional) The expiration time of the order in milliseconds (default: now + 30 days).
+   * @param orderArgs.isBuy Whether to buy (true) or sell (false).
+   * @param [orderArgs.nonce] (Optional) A unique identifier for the order. (default: current unix timestamp in nano seconds).
+   * @param orderArgs.price The price of the order.
+   * @param orderArgs.productId The product identifier for the order.
+   * @param orderArgs.quantity The quantity of the order.
+   * @returns A promise that resolves to an object with either the new order or an error.
+   * @throws {Error} Thrown if an error occurs during the order process. The error object may contain details from the API response or a generic message.
+   */
+  public cancelAndReplaceOrder = async (
+    orderId: HexString,
+    {
+      expiration = this.#getCurrentTimestamp() + THIRTY_DAYS,
+      isBuy,
+      nonce = this.#getNonce(),
+      price,
+      productId,
+      quantity,
+    }: ReplacementOrderArgs,
+  ): Promise<PlaceOrderReturnType> => {
+    const bigPrice = this.#toWei(price)
+    const bigQuantity = this.#toWei(quantity)
+
+    const sharedParams = {
+      account: this.account.address,
+      isBuy,
+      orderType: OrderType.LIMIT_MAKER,
+      productId,
+      subAccountId: this.subAccountId,
+      timeInForce: TimeInForce.GTC,
+    }
+    const message = {
+      expiration: BigInt(expiration),
+      nonce: BigInt(nonce),
+      price: bigPrice,
+      quantity: bigQuantity,
+      ...sharedParams,
+    }
+
+    try {
+      const signature = await this.#generateSignature(message, 'Order')
+
+      const { error, ...order } = await this.#fetchFromAPI<Order>('order/cancel-and-replace', {
+        body: JSON.stringify({
+          idToCancel: orderId,
+          newOrder: {
+            expiration,
+            nonce,
+            price: bigPrice.toString(),
+            quantity: bigQuantity.toString(),
+            signature,
+            ...sharedParams,
+          },
+        }),
+        method: 'POST',
+      })
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          order: {},
+        }
+      }
+
+      return { order }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        order: {},
+      }
+    }
+  }
+
+  /**
+   * Cancel all open orders for a specific product.
+   *
+   * {@link https://100x.readme.io/reference/cancel-all-open-orders-trade}
+   *
+   * @param productId The product ID of the orders to be cancelled.
+   * @returns A promise that resolves with an object containing the cancellation status, or an error object.
+   * @throws {Error} Thrown if an error occurs during the cancellation process. The error object may contain details from the API response or a generic message.
+   */
+  public cancelOpenOrdersForProduct = async (
+    productId: number,
+  ): Promise<CancelOrdersReturnType> => {
+    const message = {
+      account: this.account.address,
+      productId,
+      subAccountId: this.subAccountId,
+    }
+
+    try {
+      const signature = await this.#generateSignature(message, 'CancelOrders')
+
+      const { error, success } = await this.#fetchFromAPI<CancelOrders>('openOrders', {
+        body: JSON.stringify({ ...message, signature }),
+        method: 'DELETE',
+      })
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          success,
+        }
+      }
+
+      return { success }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+
+        success: false,
+      }
+    }
+  }
+
+  /**
+   * Cancel an order on the exchange.
+   *
+   * {@link https://100x.readme.io/reference/cancel-order}
+   *
+   * @param orderId The unique order ID of the order to be cancelled.
+   * @param productId The product ID of the order to be cancelled.
+   * @returns A promise that resolves with an object containing the cancellation status, or an error object.
+   * @throws {Error} Thrown if an error occurs during the cancellation process. The error object may contain details from the API response or a generic message.
+   */
+  public cancelOrder = async (
+    orderId: HexString,
+    productId: number,
+  ): Promise<CancelOrderReturnType> => {
+    const message = {
+      account: this.account.address,
+      orderId,
+      productId,
+      subAccountId: this.subAccountId,
+    }
+
+    try {
+      const signature = await this.#generateSignature(message, 'CancelOrder')
+
+      const { error, success } = await this.#fetchFromAPI<CancelOrder>('order', {
+        body: JSON.stringify({ ...message, signature }),
+        method: 'DELETE',
+      })
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          success,
+        }
+      }
+
+      return { success }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        success: false,
+      }
+    }
+  }
+
+  /**
+   * Cancels multiple orders on the exchange.
+   * This function is a wrapper around {@link HundredXClient.cancelOrder} and takes the same args in list form.
+   *
+   * @param ordersArgs A list of order arguments. See {@link HundredXClient.cancelOrder} for further details.
+   * @returns A promise that resolves to a list of objects with either the cancellation status or an error.
+   */
+  public cancelOrders = async (
+    ordersArgs: [HexString, number][],
+  ): Promise<CancelOrderReturnType[]> => {
+    return await Promise.all(ordersArgs.map(async order => await this.cancelOrder(...order)))
+  }
+
+  /**
    * Deposits a specified quantity of an asset.
    *
    * {@link https://100x.readme.io/reference/depositing}
@@ -533,6 +753,101 @@ class HundredXClient {
   }
 
   /**
+   * Places an order on the exchange.
+   *
+   * {@link https://100x.readme.io/reference/place-order}
+   *
+   * @param orderArgs The order arguments.
+   * @param [orderArgs.expiration] (Optional) The expiration time of the order in milliseconds (default: now + 30 days).
+   * @param orderArgs.isBuy Whether to buy (true) or sell (false).
+   * @param [orderArgs.nonce] (Optional) A unique identifier for the order. (default: current unix timestamp in nano seconds).
+   * @param [orderArgs.orderType] (Optional) The type of order (default: market). Use the {@link OrderType} enum.
+   * @param orderArgs.price The price of the order.
+   * @param orderArgs.productId The product identifier for the order.
+   * @param orderArgs.quantity The quantity of the order.
+   * @param [orderArgs.timeInForce] (Optional) The time in force for the order (default: FOK). Use the {@link TimeInForce} enum.
+   * @param [orderArgs.slippage] (Optional) The percentage by which to adjust the price when orderType is {@link OrderType.MARKET}.
+   * @returns A promise that resolves to an object with either the order or an error.
+   * @throws {Error} Thrown if an error occurs during the order process. The error object may contain details from the API response or a generic message.
+   */
+  public placeOrder = async ({
+    expiration = this.#getCurrentTimestamp() + THIRTY_DAYS,
+    isBuy,
+    nonce = this.#getNonce(),
+    orderType = OrderType.MARKET,
+    price,
+    productId,
+    quantity,
+    slippage = 2.5,
+    timeInForce = TimeInForce.FOK,
+  }: OrderArgs): Promise<PlaceOrderReturnType> => {
+    const bigPrice =
+      orderType === OrderType.MARKET
+        ? this.#toWei(this.#adjustPriceForSlippage(isBuy, price, slippage))
+        : this.#toWei(price)
+    const bigQuantity = this.#toWei(quantity)
+
+    const sharedParams = {
+      account: this.account.address,
+      isBuy,
+      orderType,
+      productId,
+      subAccountId: this.subAccountId,
+      timeInForce,
+    }
+    const message = {
+      expiration: BigInt(expiration),
+      nonce: BigInt(nonce),
+      price: bigPrice,
+      quantity: bigQuantity,
+      ...sharedParams,
+    }
+
+    try {
+      const signature = await this.#generateSignature(message, 'Order')
+
+      const { error, ...order } = await this.#fetchFromAPI<Order>('order', {
+        body: JSON.stringify({
+          expiration,
+          nonce,
+          price: bigPrice.toString(),
+          quantity: bigQuantity.toString(),
+          signature,
+          ...sharedParams,
+        }),
+        method: 'POST',
+      })
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          order: {},
+        }
+      }
+
+      return { order }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        order: {},
+      }
+    }
+  }
+
+  /**
+   * Places multiple orders on the exchange.
+   * This function is a wrapper around {@link HundredXClient.placeOrder} and takes the same args in list form.
+   *
+   * @param ordersArgs A list of order arguments. See {@link HundredXClient.placeOrder} for further details.
+   * @returns A promise that resolves to a list of objects with either the order or an error.
+   */
+  public placeOrders = async (ordersArgs: OrderArgs[]): Promise<PlaceOrderReturnType[]> => {
+    return await Promise.all(ordersArgs.map(async orderArgs => await this.placeOrder(orderArgs)))
+  }
+
+  /**
    * Withdraw a specified quantity of an asset.
    *
    * {@link https://100x.readme.io/reference/withdraw}
@@ -549,7 +864,7 @@ class HundredXClient {
     this.#logger.info({ msg: `Withdrawing ${quantity} ${asset}...` })
 
     const bigQuantity = this.#toWei(quantity)
-    const nonce = this.#getCurrentTimestamp()
+    const nonce = this.#getNonce()
 
     const sharedParams = {
       account: this.account.address,
@@ -564,11 +879,6 @@ class HundredXClient {
 
     try {
       const signature = await this.#generateSignature(message, 'Withdraw')
-
-      this.#logger.debug({
-        msg: 'Generated signature with following params:',
-        ...message,
-      })
 
       const { error, success } = await this.#fetchFromAPI<BaseApiResponse>('withdraw', {
         body: JSON.stringify({
