@@ -203,6 +203,10 @@ interface KlinesReturnType extends ErrorReturnType {
   klines: Kline[]
 }
 
+interface OpenOrdersReturnType extends ErrorReturnType {
+  orders: Order[]
+}
+
 interface OrderBookReturnType extends ErrorReturnType, OrderBookResponse {}
 
 interface PlaceOrderReturnType extends ErrorReturnType {
@@ -251,6 +255,7 @@ export {
   type KlineOptionalArgs,
   type KlinesResponse,
   type KlinesReturnType,
+  type OpenOrdersReturnType,
   type Order,
   type OrderArgs,
   type OrderBookResponse,

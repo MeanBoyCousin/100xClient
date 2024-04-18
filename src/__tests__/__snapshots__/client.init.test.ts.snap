@@ -33,6 +33,7 @@ HundredXClient {
   "getServerTime": [Function],
   "getTickers": [Function],
   "listBalances": [Function],
+  "listOpenOrders": [Function],
   "listPositions": [Function],
   "logs": [
     {
@@ -82,6 +83,7 @@ HundredXClient {
   "getServerTime": [Function],
   "getTickers": [Function],
   "listBalances": [Function],
+  "listOpenOrders": [Function],
   "listPositions": [Function],
   "logs": [],
   "placeOrder": [Function],

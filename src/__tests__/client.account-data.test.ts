@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import HundredXClient from 'src'
 import EIP712 from 'src/ABI/EIP712'
-import { address, mockBalances, mockPositions, privateKey } from 'vitest/utils'
+import { address, mockBalances, mockOpenOrders, mockPositions, privateKey } from 'vitest/utils'
 
 describe('The HundredXClient', () => {
   beforeEach(() => {
@@ -208,6 +208,148 @@ describe('The HundredXClient', () => {
       expect(result).toEqual({
         error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
         positions: [],
+      })
+    })
+  })
+
+  describe('listOpenOrders function', () => {
+    it('should allow a user to fetch their positions', async () => {
+      fetchMock.mockResponse(JSON.stringify(mockOpenOrders))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.listOpenOrders()
+      const call = fetchMock.mock.calls[0]
+
+      expect(
+        await recoverTypedDataAddress({
+          domain: Client.domain,
+          message: {
+            account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
+            subAccountId: 1,
+          },
+          primaryType: 'SignedAuthentication',
+          signature: new URL(call[0] as string).searchParams.get('signature') as HexString,
+          types: EIP712,
+        }),
+      ).toEqual(address)
+      expect(call).toMatchInlineSnapshot(`
+        [
+          "https://api.ciaobella.dev/v1/openOrders?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0xeeeabb738b08cce6097a3a64289cf90fc4d5802c4b49c8050f879654d7d3d0061fea6f9dbcf18b2eedf5e26778a24fb64cf41ab05be615a57891112e6348e0231c&subAccountId=1",
+          undefined,
+        ]
+      `)
+      expect(result).toEqual({
+        orders: [
+          {
+            id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158fu',
+            productId: 1006,
+            productSymbol: 'blastperp',
+            account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
+            subAccountId: 1,
+            isBuy: true,
+            orderType: 0,
+            timeInForce: 0,
+            price: '4698000000000000000',
+            quantity: '6500000000000000000',
+            nonce: 1712421760000,
+            sender: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
+            signature:
+              '0xeb1965e2504cadf99f13512273dbff1092fd514b4f7143d01e6f5939f5d0131775354ba3b0dd1a8c527fc1d2754e7a4868b934b93dde440e3d3d576212b5093e1c',
+            expiry: 1712421760000,
+            createdAt: 1712829961877,
+            status: 'OPEN',
+            residualQuantity: '6500000000000000000',
+          },
+          {
+            id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f',
+            productId: 1002,
+            productSymbol: 'ethperp',
+            account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
+            subAccountId: 1,
+            isBuy: true,
+            orderType: 1,
+            timeInForce: 0,
+            price: '3455000000000000000000',
+            quantity: '1000000000000000',
+            nonce: 1712421760000,
+            sender: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
+            signature:
+              '0x099fd784840218f0df8cf557e6a42ba8d26f6c8588a22b69f34f6d3e2705714a1d3bb8238a0a21ff824b77920691a7e926a02b2d8ebe8accf62895027b8417fd1c',
+            expiry: 1712421760000,
+            createdAt: 1712829961877,
+            status: 'OPEN',
+            residualQuantity: '1000000000000000',
+          },
+        ],
+      })
+    })
+
+    it('should allow a user to fetch their positions for a specified product symbol', async () => {
+      fetchMock.mockResponse(JSON.stringify([mockOpenOrders[1]]))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.listOpenOrders('blastperp')
+      const call = fetchMock.mock.calls[0]
+
+      expect(call).toMatchInlineSnapshot(`
+        [
+          "https://api.ciaobella.dev/v1/openOrders?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0xeeeabb738b08cce6097a3a64289cf90fc4d5802c4b49c8050f879654d7d3d0061fea6f9dbcf18b2eedf5e26778a24fb64cf41ab05be615a57891112e6348e0231c&subAccountId=1&symbol=blastperp",
+          undefined,
+        ]
+      `)
+      expect(result).toEqual({
+        orders: [
+          {
+            id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f',
+            productId: 1002,
+            productSymbol: 'ethperp',
+            account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
+            subAccountId: 1,
+            isBuy: true,
+            orderType: 1,
+            timeInForce: 0,
+            price: '3455000000000000000000',
+            quantity: '1000000000000000',
+            nonce: 1712421760000,
+            sender: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
+            signature:
+              '0x099fd784840218f0df8cf557e6a42ba8d26f6c8588a22b69f34f6d3e2705714a1d3bb8238a0a21ff824b77920691a7e926a02b2d8ebe8accf62895027b8417fd1c',
+            expiry: 1712421760000,
+            createdAt: 1712829961877,
+            status: 'OPEN',
+            residualQuantity: '1000000000000000',
+          },
+        ],
+      })
+    })
+
+    it('should handle an error during the order process', async () => {
+      fetchMock.mockResponse(JSON.stringify({ error: 'A known error occurred' }))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.listOpenOrders()
+
+      expect(result).toEqual({
+        error: {
+          message: 'A known error occurred',
+        },
+        orders: [],
+      })
+    })
+
+    it('should handle an unknown error', async () => {
+      fetchMock.mockReject(new Error('An unknown error occurred'))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.listOpenOrders()
+
+      expect(result).toEqual({
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        orders: [],
       })
     })
   })
