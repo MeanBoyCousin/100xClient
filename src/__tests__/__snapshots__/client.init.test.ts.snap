@@ -33,6 +33,7 @@ HundredXClient {
   "getServerTime": [Function],
   "getTickers": [Function],
   "listBalances": [Function],
+  "listPositions": [Function],
   "logs": [
     {
       "msg": "Debug mode enabled",
@@ -81,6 +82,7 @@ HundredXClient {
   "getServerTime": [Function],
   "getTickers": [Function],
   "listBalances": [Function],
+  "listPositions": [Function],
   "logs": [],
   "placeOrder": [Function],
   "placeOrders": [Function],

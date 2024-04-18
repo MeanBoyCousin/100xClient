@@ -236,3 +236,38 @@ export const mockBalances = [
     pendingWithdrawal: '0',
   },
 ]
+
+export const mockPositions = [
+  {
+    account: '0x23a90125d8b71a6f18c905d1cce0579b3e589f90',
+    subAccountId: 1,
+    productId: 1002,
+    productSymbol: 'ethperp',
+    quantity: '200000000000000000',
+    avgEntryPrice: '3015500000000000000000',
+    initCumFunding: '-111231678929171498671',
+    pnl: '-3304396381014467820',
+    margin: '18093000000000000000',
+    returnOnMargin: '<nil>',
+    liquidationPrice: '2603153505535656747970',
+    accruedFunding: '736486652336197441',
+    markPrice: '2998978018094927660897',
+    currentCumFunding: '-114914112190852485879',
+  },
+  {
+    account: '0x23a90125d8b71a6f18c905d1cce0579b3e589f90',
+    subAccountId: 1,
+    productId: 1006,
+    productSymbol: 'blastperp',
+    quantity: '2000000000000000000',
+    avgEntryPrice: '4800000000000000000',
+    initCumFunding: '50840989198196999',
+    pnl: '-167635635004808730',
+    margin: '2400000000000000000',
+    returnOnMargin: '<nil>',
+    liquidationPrice: '0',
+    accruedFunding: '0',
+    markPrice: '4716182182497595635',
+    currentCumFunding: '50840989198196999',
+  },
+]

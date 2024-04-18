@@ -107,6 +107,22 @@ interface OrderBookResponse {
   bids: OrderBookRow[]
 }
 
+interface Position {
+  account: HexString
+  accruedFunding: bigint
+  avgEntryPrice: bigint
+  currentCumFunding: bigint
+  initCumFunding: bigint
+  liquidationPrice: bigint
+  margin: bigint
+  markPrice: bigint
+  pnl: bigint
+  productId: number
+  productSymbol: ProductSymbol
+  quantity: bigint
+  subAccountId: number
+}
+
 interface Product {
   active: boolean
   baseAsset: string
@@ -193,6 +209,10 @@ interface PlaceOrderReturnType extends ErrorReturnType {
   order: Omit<Order, 'error'> | {}
 }
 
+interface PositionsReturnType extends ErrorReturnType {
+  positions: Position[]
+}
+
 interface ProductReturnType extends ErrorReturnType {
   product: ProductResponse | {}
 }
@@ -236,6 +256,8 @@ export {
   type OrderBookResponse,
   type OrderBookReturnType,
   type PlaceOrderReturnType,
+  type Position,
+  type PositionsReturnType,
   type ProductResponse,
   type ProductReturnType,
   type ProductsResponse,
