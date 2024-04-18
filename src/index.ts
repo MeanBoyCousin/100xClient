@@ -1,5 +1,7 @@
 import type { MarginAssetKey } from './constants/marginAssets'
 import type {
+  Balance,
+  BalancesReturnType,
   BaseApiResponse,
   CancelOrder,
   CancelOrderReturnType,
@@ -17,6 +19,8 @@ import type {
   OrderBookResponse,
   OrderBookReturnType,
   PlaceOrderReturnType,
+  Position,
+  PositionsReturnType,
   ProductResponse,
   ProductReturnType,
   ProductSymbol,
@@ -28,8 +32,6 @@ import type {
   TickerResponse,
   TickerReturnType,
   WithdrawReturnType,
-  Balance,
-  BalancesReturnType,
 } from './types'
 import type { Logger } from 'pino'
 import type { PrivateKeyAccount, PublicClient, WalletClient } from 'viem'
@@ -55,7 +57,7 @@ import CIAO_ADDRESS from './constants/ciao'
 import MARGIN_ASSETS from './constants/marginAssets'
 import { THIRTY_DAYS } from './constants/time'
 import VERIFIER_ADDRESS from './constants/verifier'
-import { Environment, Interval, OrderType, TimeInForce, MarginAssets } from './enums'
+import { Environment, Interval, MarginAssets, OrderType, TimeInForce } from './enums'
 import sleep from './utils/sleep'
 import toRounded from './utils/toRounded'
 
@@ -819,6 +821,48 @@ class HundredXClient {
       return {
         balances: [],
         error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+      }
+    }
+  }
+
+  /**
+   * List all positions for the account and sub-account.
+   * An optional product symbol can be passed to limit the results to just that product.
+   *
+   * {@link https://100x.readme.io/reference/get-perpetual-positions}
+   *
+   * @param [productSymbol] (Optional) A specific product symbol to fetch positions for.
+   * @returns A promise that resolves to an object with either the list of positions or an error.
+   * @throws {Error} Thrown if an error occurs fetching the data. The error object may contain details from the API response or a generic message.
+   */
+  public listPositions = async (productSymbol?: ProductSymbol): Promise<PositionsReturnType> => {
+    try {
+      const signature = await this.#generateSignedAuthentication()
+
+      const params = new URLSearchParams({
+        account: this.account.address,
+        signature,
+        subAccountId: this.subAccountId.toString(),
+        ...(productSymbol ? { symbol: productSymbol } : {}),
+      })
+      const response = await this.#fetchFromAPI<Required<BaseApiResponse> | Position[]>(
+        `positionRisk?${params.toString()}`,
+      )
+
+      if (!Array.isArray(response)) {
+        this.#logger.error({ msg: response.error })
+        return {
+          error: { message: response.error },
+          positions: [],
+        }
+      }
+
+      return { positions: response }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        positions: [],
       }
     }
   }
