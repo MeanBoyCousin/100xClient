@@ -19,6 +19,7 @@ import type {
   PlaceOrderReturnType,
   ProductResponse,
   ProductReturnType,
+  ProductSymbol,
   ProductsResponse,
   ProductsReturnType,
   ReplacementOrderArgs,
@@ -302,7 +303,7 @@ class HundredXClient {
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
   public getOrderBook = async (
-    productSymbol: string,
+    productSymbol: ProductSymbol,
     limit: 5 | 10 | 20 = 5,
     granularity: number = 10,
   ): Promise<OrderBookReturnType> => {
@@ -337,7 +338,7 @@ class HundredXClient {
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
   public getKlines = async (
-    productSymbol: string,
+    productSymbol: ProductSymbol,
     optionalArgs?: KlineOptionalArgs,
   ): Promise<KlinesReturnType> => {
     if (optionalArgs) {
@@ -467,7 +468,7 @@ class HundredXClient {
    * @returns A promise that resolves with an object containing the ticker data, or an error object.
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
-  public getTickers = async (productSymbol?: string): Promise<TickerReturnType> => {
+  public getTickers = async (productSymbol?: ProductSymbol): Promise<TickerReturnType> => {
     try {
       const tickers = await this.#fetchFromAPI<TickerResponse>(
         `ticker/24hr${productSymbol ? `?symbol=${productSymbol}` : ''}`,
