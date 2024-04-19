@@ -56,6 +56,10 @@ interface Balance {
   pendingWithdrawal: bigint
 }
 
+interface CalculateMarginRequirement extends BaseApiResponse {
+  value: bigint
+}
+
 interface CancelOrder extends BaseApiResponse {}
 
 interface CancelOrders extends CancelOrder {}
@@ -186,6 +190,10 @@ interface BalancesReturnType extends ErrorReturnType {
   }[]
 }
 
+interface CalculateMarginRequirementReturnType extends ErrorReturnType {
+  required: bigint
+}
+
 interface CancelOrderReturnType extends ErrorReturnType {
   success: boolean
 }
@@ -243,6 +251,8 @@ export {
   type Balance,
   type BalancesReturnType,
   type BaseApiResponse,
+  type CalculateMarginRequirement,
+  type CalculateMarginRequirementReturnType,
   type CancelOrder,
   type CancelOrderReturnType,
   type CancelOrders,
