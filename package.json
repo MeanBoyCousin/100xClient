@@ -32,8 +32,8 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsup --dts",
+    "dev": "tsup --watch --no-dts",
     "postinstall": "node -e \"process.exit(process.env.VERCEL_ENV == 'production' ? 0 : 1)\" || husky",
     "lint": "eslint",
     "sandbox": "tsx src/sandbox.ts",
