@@ -604,4 +604,53 @@ describe('The HundredXClient REST', () => {
       })
     })
   })
+
+  describe('calculate margin requirement endpoint', () => {
+    it('should allow a user to successfully cancel an order', async () => {
+      fetchMock.mockResponse(
+        JSON.stringify({
+          error: '',
+          success: true,
+          value: '17449331829095744143007',
+        }),
+      )
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.calculateMarginRequirement(true, 3000, 1002, 10)
+
+      expect(fetchMock.mock.calls[0][0]).toMatch(
+        /.+\/new-order-margin\?isBuy=true&price=3000000000000000000000&productId=1002&quantity=10000000000000000000$/,
+      )
+      expect(result).toEqual({ required: '17449331829095744143007' })
+    })
+
+    it('should handle an error during the cancel process', async () => {
+      fetchMock.mockResponse(JSON.stringify({ error: 'A known error occurred', success: false }))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.calculateMarginRequirement(true, 3000, 1002, 10)
+
+      expect(result).toEqual({
+        error: {
+          message: 'A known error occurred',
+        },
+        required: 0n,
+      })
+    })
+
+    it('should handle an unknown error', async () => {
+      fetchMock.mockReject(new Error('An unknown error occurred'))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.calculateMarginRequirement(true, 3000, 1002, 10)
+
+      expect(result).toEqual({
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        required: 0n,
+      })
+    })
+  })
 })
