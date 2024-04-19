@@ -226,3 +226,72 @@ export const replacementOrder = {
   status: 'OPEN',
   residualQuantity: '1000000000000000',
 }
+
+export const mockBalances = [
+  {
+    account: '0x23a90125d8b71a6f18c905d1cce0579b3e589f90',
+    subaccount: 1,
+    asset: '0x79a59c326c715ac2d31c169c85d1232319e341ce',
+    quantity: '100000000000000000000',
+    pendingWithdrawal: '0',
+  },
+]
+
+export const mockPositions = [
+  {
+    account: '0x23a90125d8b71a6f18c905d1cce0579b3e589f90',
+    subAccountId: 1,
+    productId: 1002,
+    productSymbol: 'ethperp',
+    quantity: '200000000000000000',
+    avgEntryPrice: '3015500000000000000000',
+    initCumFunding: '-111231678929171498671',
+    pnl: '-3304396381014467820',
+    margin: '18093000000000000000',
+    returnOnMargin: '<nil>',
+    liquidationPrice: '2603153505535656747970',
+    accruedFunding: '736486652336197441',
+    markPrice: '2998978018094927660897',
+    currentCumFunding: '-114914112190852485879',
+  },
+  {
+    account: '0x23a90125d8b71a6f18c905d1cce0579b3e589f90',
+    subAccountId: 1,
+    productId: 1006,
+    productSymbol: 'blastperp',
+    quantity: '2000000000000000000',
+    avgEntryPrice: '4800000000000000000',
+    initCumFunding: '50840989198196999',
+    pnl: '-167635635004808730',
+    margin: '2400000000000000000',
+    returnOnMargin: '<nil>',
+    liquidationPrice: '0',
+    accruedFunding: '0',
+    markPrice: '4716182182497595635',
+    currentCumFunding: '50840989198196999',
+  },
+]
+
+export const mockOpenOrders = [
+  {
+    id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158fu',
+    productId: 1006,
+    productSymbol: 'blastperp',
+    account: address,
+    subAccountId: 1,
+    isBuy: true,
+    orderType: 0,
+    timeInForce: 0,
+    price: '4698000000000000000',
+    quantity: '6500000000000000000',
+    nonce: 1712421760000,
+    sender: address,
+    signature:
+      '0xeb1965e2504cadf99f13512273dbff1092fd514b4f7143d01e6f5939f5d0131775354ba3b0dd1a8c527fc1d2754e7a4868b934b93dde440e3d3d576212b5093e1c',
+    expiry: 1712421760000,
+    createdAt: 1712829961877,
+    status: 'OPEN',
+    residualQuantity: '6500000000000000000',
+  },
+  replacementOrder,
+]

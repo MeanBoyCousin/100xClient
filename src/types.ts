@@ -1,3 +1,4 @@
+import type { MarginAssetKey } from 'src/constants/marginAssets'
 import type {
   Environment as EnvironmentEnum,
   Interval,
@@ -25,6 +26,8 @@ type Environment = EnvironmentEnum
 
 type HexString = `0x${string}`
 
+type ProductSymbol = `${string}perp`
+
 // Method param types
 
 interface OrderArgs {
@@ -45,6 +48,12 @@ interface ReplacementOrderArgs extends Omit<OrderArgs, 'orderType' | 'timeInForc
 interface BaseApiResponse {
   error?: string
   success: boolean
+}
+
+interface Balance {
+  asset: HexString
+  quantity: bigint
+  pendingWithdrawal: bigint
 }
 
 interface CancelOrder extends BaseApiResponse {}
@@ -82,7 +91,7 @@ interface Order extends Pick<BaseApiResponse, 'error'> {
   orderType: OrderType
   price: bigint
   productId: number
-  productSymbol: string
+  productSymbol: ProductSymbol
   quantity: bigint
   residualQuantity: bigint
   sender: HexString
@@ -96,6 +105,22 @@ type OrderBookRow = [bigint, bigint, bigint]
 interface OrderBookResponse {
   asks: OrderBookRow[]
   bids: OrderBookRow[]
+}
+
+interface Position {
+  account: HexString
+  accruedFunding: bigint
+  avgEntryPrice: bigint
+  currentCumFunding: bigint
+  initCumFunding: bigint
+  liquidationPrice: bigint
+  margin: bigint
+  markPrice: bigint
+  pnl: bigint
+  productId: number
+  productSymbol: ProductSymbol
+  quantity: bigint
+  subAccountId: number
 }
 
 interface Product {
@@ -139,7 +164,7 @@ interface Ticker {
   priceChange: bigint
   priceChangePercent: string
   productId: number
-  productSymbol: string
+  productSymbol: ProductSymbol
   volume: bigint
 }
 type TickerResponse = Ticker[]
@@ -150,6 +175,15 @@ interface ErrorReturnType {
     errorName?: string
     message: string
   }
+}
+
+interface BalancesReturnType extends ErrorReturnType {
+  balances: {
+    address: HexString
+    asset: MarginAssetKey
+    quantity: bigint
+    pendingWithdrawal: bigint
+  }[]
 }
 
 interface CancelOrderReturnType extends ErrorReturnType {
@@ -169,10 +203,18 @@ interface KlinesReturnType extends ErrorReturnType {
   klines: Kline[]
 }
 
+interface OpenOrdersReturnType extends ErrorReturnType {
+  orders: Order[]
+}
+
 interface OrderBookReturnType extends ErrorReturnType, OrderBookResponse {}
 
 interface PlaceOrderReturnType extends ErrorReturnType {
   order: Omit<Order, 'error'> | {}
+}
+
+interface PositionsReturnType extends ErrorReturnType {
+  positions: Position[]
 }
 
 interface ProductReturnType extends ErrorReturnType {
@@ -198,6 +240,8 @@ interface WithdrawReturnType extends ErrorReturnType {
 export {
   OrderType,
   TimeInForce,
+  type Balance,
+  type BalancesReturnType,
   type BaseApiResponse,
   type CancelOrder,
   type CancelOrderReturnType,
@@ -211,15 +255,19 @@ export {
   type KlineOptionalArgs,
   type KlinesResponse,
   type KlinesReturnType,
+  type OpenOrdersReturnType,
   type Order,
   type OrderArgs,
   type OrderBookResponse,
   type OrderBookReturnType,
   type PlaceOrderReturnType,
+  type Position,
+  type PositionsReturnType,
   type ProductResponse,
   type ProductReturnType,
   type ProductsResponse,
   type ProductsReturnType,
+  type ProductSymbol,
   type ReplacementOrderArgs,
   type ServerTimeResponse,
   type ServerTimeReturnType,

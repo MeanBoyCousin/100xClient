@@ -1,5 +1,7 @@
 import type { MarginAssetKey } from './constants/marginAssets'
 import type {
+  Balance,
+  BalancesReturnType,
   BaseApiResponse,
   CancelOrder,
   CancelOrderReturnType,
@@ -12,13 +14,17 @@ import type {
   KlineOptionalArgs,
   KlinesResponse,
   KlinesReturnType,
+  OpenOrdersReturnType,
   Order,
   OrderArgs,
   OrderBookResponse,
   OrderBookReturnType,
   PlaceOrderReturnType,
+  Position,
+  PositionsReturnType,
   ProductResponse,
   ProductReturnType,
+  ProductSymbol,
   ProductsResponse,
   ProductsReturnType,
   ReplacementOrderArgs,
@@ -52,7 +58,7 @@ import CIAO_ADDRESS from './constants/ciao'
 import MARGIN_ASSETS from './constants/marginAssets'
 import { THIRTY_DAYS } from './constants/time'
 import VERIFIER_ADDRESS from './constants/verifier'
-import { Environment, Interval, OrderType, TimeInForce } from './enums'
+import { Environment, Interval, MarginAssets, OrderType, TimeInForce } from './enums'
 import sleep from './utils/sleep'
 import toRounded from './utils/toRounded'
 
@@ -207,6 +213,19 @@ class HundredXClient {
   }
 
   /**
+   * Generates a signature for the EIP712 type `SignedAuthentication`.
+   *
+   * @returns A promise that resolves to the generated signature as a hex string.
+   * @throws {Error} - If there is an error during the signing process.
+   */
+  #generateSignedAuthentication = async (): Promise<HexString> => {
+    return await this.#generateSignature(
+      { account: this.account.address, subAccountId: this.subAccountId },
+      'SignedAuthentication',
+    )
+  }
+
+  /**
    * Gets the current timestamp.
    *
    * @returns The current timestamp in milliseconds.
@@ -287,7 +306,7 @@ class HundredXClient {
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
   public getOrderBook = async (
-    productSymbol: string,
+    productSymbol: ProductSymbol,
     limit: 5 | 10 | 20 = 5,
     granularity: number = 10,
   ): Promise<OrderBookReturnType> => {
@@ -322,7 +341,7 @@ class HundredXClient {
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
   public getKlines = async (
-    productSymbol: string,
+    productSymbol: ProductSymbol,
     optionalArgs?: KlineOptionalArgs,
   ): Promise<KlinesReturnType> => {
     if (optionalArgs) {
@@ -452,7 +471,7 @@ class HundredXClient {
    * @returns A promise that resolves with an object containing the ticker data, or an error object.
    * @throws {Error} Thrown if an error occurs fetching the data.
    */
-  public getTickers = async (productSymbol?: string): Promise<TickerReturnType> => {
+  public getTickers = async (productSymbol?: ProductSymbol): Promise<TickerReturnType> => {
     try {
       const tickers = await this.#fetchFromAPI<TickerResponse>(
         `ticker/24hr${productSymbol ? `?symbol=${productSymbol}` : ''}`,
@@ -748,6 +767,145 @@ class HundredXClient {
       return {
         error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
         success: false,
+      }
+    }
+  }
+
+  /**
+   * List all margin balances for the account and sub-account.
+   *
+   * {@link https://100x.readme.io/reference/get-spot-position}
+   *
+   * Note: The `asset` key for each balance object will match one of the values found in the {@link MarginAssets} enum.
+   *
+   * @returns A promise that resolves to an object with either the list of balances or an error.
+   * @throws {Error} Thrown if an error occurs fetching the data. The error object may contain details from the API response or a generic message.
+   */
+  public listBalances = async (): Promise<BalancesReturnType> => {
+    try {
+      const signature = await this.#generateSignedAuthentication()
+
+      const addressToKeyMap = Object.entries(MARGIN_ASSETS[this.environment]).reduce(
+        (map, [key, address]) => ({
+          ...map,
+          [address]: key,
+        }),
+        {} as Record<HexString, MarginAssetKey>,
+      )
+      const params = new URLSearchParams({
+        account: this.account.address,
+        signature,
+        subAccountId: this.subAccountId.toString(),
+      })
+      const response = await this.#fetchFromAPI<Required<BaseApiResponse> | Balance[]>(
+        `balances?${params.toString()}`,
+      )
+
+      if (!Array.isArray(response)) {
+        this.#logger.error({ msg: response.error })
+        return {
+          balances: [],
+          error: { message: response.error },
+        }
+      }
+
+      return {
+        balances: response.map(({ asset, pendingWithdrawal, quantity }) => ({
+          address: asset,
+          asset: addressToKeyMap[asset],
+          pendingWithdrawal,
+          quantity,
+        })),
+      }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        balances: [],
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+      }
+    }
+  }
+
+  /**
+   * List all open orders for the account and sub-account.
+   * An optional product symbol can be passed to limit the results to just that product.
+   *
+   * {@link https://100x.readme.io/reference/list-open-orders}
+   *
+   * @param [productSymbol] (Optional) A specific product symbol to fetch positions for.
+   * @returns A promise that resolves to an object with either the list of open orders or an error.
+   * @throws {Error} Thrown if an error occurs fetching the data. The error object may contain details from the API response or a generic message.
+   */
+  public listOpenOrders = async (productSymbol?: ProductSymbol): Promise<OpenOrdersReturnType> => {
+    try {
+      const signature = await this.#generateSignedAuthentication()
+
+      const params = new URLSearchParams({
+        account: this.account.address,
+        signature,
+        subAccountId: this.subAccountId.toString(),
+        ...(productSymbol ? { symbol: productSymbol } : {}),
+      })
+      const response = await this.#fetchFromAPI<Required<BaseApiResponse> | Order[]>(
+        `openOrders?${params.toString()}`,
+      )
+
+      if (!Array.isArray(response)) {
+        this.#logger.error({ msg: response.error })
+        return {
+          error: { message: response.error },
+          orders: [],
+        }
+      }
+
+      return { orders: response }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        orders: [],
+      }
+    }
+  }
+
+  /**
+   * List all positions for the account and sub-account.
+   * An optional product symbol can be passed to limit the results to just that product.
+   *
+   * {@link https://100x.readme.io/reference/get-perpetual-positions}
+   *
+   * @param [productSymbol] (Optional) A specific product symbol to fetch positions for.
+   * @returns A promise that resolves to an object with either the list of positions or an error.
+   * @throws {Error} Thrown if an error occurs fetching the data. The error object may contain details from the API response or a generic message.
+   */
+  public listPositions = async (productSymbol?: ProductSymbol): Promise<PositionsReturnType> => {
+    try {
+      const signature = await this.#generateSignedAuthentication()
+
+      const params = new URLSearchParams({
+        account: this.account.address,
+        signature,
+        subAccountId: this.subAccountId.toString(),
+        ...(productSymbol ? { symbol: productSymbol } : {}),
+      })
+      const response = await this.#fetchFromAPI<Required<BaseApiResponse> | Position[]>(
+        `positionRisk?${params.toString()}`,
+      )
+
+      if (!Array.isArray(response)) {
+        this.#logger.error({ msg: response.error })
+        return {
+          error: { message: response.error },
+          positions: [],
+        }
+      }
+
+      return { positions: response }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        positions: [],
       }
     }
   }
