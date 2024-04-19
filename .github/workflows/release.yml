@@ -26,17 +26,6 @@ jobs:
       - name: Remove postinstall script
         run: npm pkg set scripts.postinstall="echo removed in build"
 
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.version.outputs.version }}
-          release_name: Release ${{ steps.version.outputs.version }}
-          draft: false
-          prerelease: false
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -48,6 +37,17 @@ jobs:
 
       - name: Build package
         run: yarn build
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: Release ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
 
       - name: Publish to NPM
         run: yarn publish
