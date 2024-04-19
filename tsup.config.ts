@@ -8,7 +8,7 @@ export default defineConfig({
   minify: false,
   platform: 'node',
   outDir: 'lib',
-  sourcemap: true,
+  sourcemap: false,
   splitting: false,
   treeshake: true,
 })
