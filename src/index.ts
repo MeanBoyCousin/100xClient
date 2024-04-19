@@ -3,6 +3,8 @@ import type {
   Balance,
   BalancesReturnType,
   BaseApiResponse,
+  CalculateMarginRequirement,
+  CalculateMarginRequirementReturnType,
   CancelOrder,
   CancelOrderReturnType,
   CancelOrders,
@@ -293,6 +295,53 @@ class HundredXClient {
   // --------------
   // REST endpoints
   // --------------
+
+  /**
+   * Calculate the required margin for a new order.
+   *
+   * {@link https://100x.readme.io/reference/margin-calculator}
+   *
+   * @param isBuy Whether to buy (true) or sell (false).
+   * @param price The price of the asset you intend to order.
+   * @param productId The product ID of asset.
+   * @param quantity The amount of the asset you intend to order.
+   * @returns A promise that resolves to an object with either the required margin or an error.
+   * @throws {Error} Thrown if an error occurs during the order process. The error object may contain details from the API response or a generic message.
+   */
+  public calculateMarginRequirement = async (
+    isBuy: boolean,
+    price: number,
+    productId: number,
+    quantity: number,
+  ): Promise<CalculateMarginRequirementReturnType> => {
+    try {
+      const params = new URLSearchParams({
+        isBuy: String(isBuy),
+        price: this.#toWei(price).toString(),
+        productId: productId.toString(),
+        quantity: this.#toWei(quantity).toString(),
+      })
+      const { error, value } = await this.#fetchFromAPI<CalculateMarginRequirement>(
+        `new-order-margin?${params}`,
+      )
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          required: BigInt(''),
+        }
+      }
+
+      return { required: value }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        required: BigInt(''),
+      }
+    }
+  }
 
   /**
    * Get the current state of the order book for a product.
