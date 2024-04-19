@@ -9,7 +9,7 @@ jobs:
   release:
     name: Release
     permissions:
-      contents: read
+      contents: write
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,8 @@ jobs:
       - name: Get version from package.json
         id: version
         run: |
-          echo ::set-output name=version::${cat package.json | jq .version}
+          package_version=$(jq -r .version package.json)
+          echo "version=${package_version}" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Create release
