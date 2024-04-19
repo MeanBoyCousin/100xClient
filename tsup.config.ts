@@ -3,12 +3,11 @@ import { defineConfig } from 'tsup'
 export default defineConfig({
   clean: true,
   entry: ['src/index.ts', 'src/enums.ts'],
-  dts: true,
   format: 'esm',
   minify: false,
   platform: 'node',
   outDir: 'lib',
-  sourcemap: true,
+  sourcemap: false,
   splitting: false,
   treeshake: true,
 })

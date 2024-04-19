@@ -1,26 +1,45 @@
 {
   "name": "100x-client",
-  "version": "0.13.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "A TypesScript client for the 100x exchange API.",
+  "description": "A TypesScript SDK for the 100x exchange API.",
   "keywords": [
     "100x",
-    "exchange",
+    "api",
     "crypto",
     "cryptocurrency",
-    "api",
+    "dex",
+    "exchange",
+    "EVM",
+    "orderbook",
+    "perps",
     "rest",
-    "websocket",
     "trading"
   ],
+  "homepage": "https://100x.finance/",
+  "bugs": "https://github.com/MeanBoyCousin/100xClient/issues",
   "repository": "https://github.com/MeanBoyCousin/100xClient.git",
   "license": "MIT",
-  "author": "Tim Dunphy <tim@rysk.finance>",
+  "author": {
+    "name": "Tim Dunphy",
+    "email": "tim@rysk.finance",
+    "web": "https://100x.finance/"
+  },
+  "contributors": [
+    {
+      "name": "Tim Dunphy",
+      "email": "tim@rysk.finance"
+    }
+  ],
   "type": "module",
   "exports": {
     ".": {
       "import ": "./lib/index.js",
       "types": "./lib/index.d.ts"
+    },
+    "./enums": {
+      "import ": "./lib/enums.js",
+      "types": "./lib/enums.d.ts"
     }
   },
   "main": "lib/index.js",
@@ -29,8 +48,8 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsup --dts",
+    "dev": "tsup --watch --no-dts",
     "postinstall": "node -e \"process.exit(process.env.VERCEL_ENV == 'production' ? 0 : 1)\" || husky",
     "lint": "eslint",
     "sandbox": "tsx src/sandbox.ts",
