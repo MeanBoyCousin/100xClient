@@ -3,14 +3,17 @@
   "version": "0.13.0",
   "private": true,
   "description": "A TypesScript client for the 100x exchange API.",
-  "keywords": [
+  "keywords":[
     "100x",
-    "exchange",
+    "api",
     "crypto",
     "cryptocurrency",
-    "api",
+    "dex",
+    "exchange",
+    "EVM",
+    "orderbook",
+    "perps",
     "rest",
-    "websocket",
     "trading"
   ],
   "repository": "https://github.com/MeanBoyCousin/100xClient.git",
