@@ -23,6 +23,9 @@ jobs:
           echo "version=${package_version}" >> $GITHUB_OUTPUT
         shell: bash
 
+      - name: Remove postinstall script
+        run: npm pkg set scripts.postinstall="echo removed in build"
+
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -33,3 +36,14 @@ jobs:
           release_name: Release ${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to NPM
+        run: npm ci && npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
