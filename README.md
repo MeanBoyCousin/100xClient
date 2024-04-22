@@ -2,7 +2,7 @@
   <img src="https://app.100x.finance/brand/100x-bg-blue.webp" alt="100x Logo" width="480" height="270" style="margin: 1rem 0;">
 </div>
 
-# 100x TypeScript Client SDK [![Test & Release](https://github.com/MeanBoyCousin/100xClient/actions/workflows/release.yml/badge.svg)](https://github.com/MeanBoyCousin/100xClient/actions/workflows/release.yml) [![npm version](https://badge.fury.io/js/100x-client.svg)](https://badge.fury.io/js/100xclient)
+# 100x TypeScript Client SDK ![Build](https://img.shields.io/github/actions/workflow/status/MeanBoyCousin/100xClient/release.yml?style=flat-square&label=Build&color=%234177f6) ![NPM Version](https://img.shields.io/npm/v/100x-client?style=flat-square&label=NPM&color=%234177f6)
 
 Interact with the [100x decentralized exchange](https://100x.finance/) and trade pre-launch tokens, BTC, ETH, SOL, BLUR and other cryptocurrency perp futures with leverage. Live on [Blast](https://blast.io/en).
 
