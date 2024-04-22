@@ -4,6 +4,7 @@ exports[`The HundredXClient > should initialise correctly with all config parame
 HundredXClient {
   "account": {
     "address": "0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8",
+    "experimental_signAuthMessage": [Function],
     "publicKey": "0x0422eea015a8664523fce2eed5de514ad98a29724755c488f3d11d913d5671c881bc2d7b1e0d17389604ef141a96830b14917b034b7621579d1159d694dd231798",
     "signMessage": [Function],
     "signTransaction": [Function],
@@ -54,6 +55,7 @@ exports[`The HundredXClient > should initialise correctly with only required par
 HundredXClient {
   "account": {
     "address": "0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8",
+    "experimental_signAuthMessage": [Function],
     "publicKey": "0x0422eea015a8664523fce2eed5de514ad98a29724755c488f3d11d913d5671c881bc2d7b1e0d17389604ef141a96830b14917b034b7621579d1159d694dd231798",
     "signMessage": [Function],
     "signTransaction": [Function],
