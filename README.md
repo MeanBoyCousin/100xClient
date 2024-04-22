@@ -53,7 +53,7 @@ const Client = new HundredXClient(MY_PRIVATE_KEY)
 
 ## Getting started
 
-To get started, you will need to deposit funds and make a trade. Let's look at how we can do that now.
+To get started, you will need to deposit funds and make a trade. Let's look at how we can do that now. If you're in need of testnet funds, please head over to the [100x Discord sever](https://discord.gg/100xdex) where we will be happy to help.
 
 ```ts
 import HundredXClient from '100x-client'
