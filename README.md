@@ -82,6 +82,21 @@ if (success) {
 }
 ```
 
+### Handy enums
+
+A series of useful enums can be imported from `100x-client/enums` and used to help match against responses or compose payloads.
+
+| Name         | Values                                                                                 | Description                                          |
+|--------------|----------------------------------------------------------------------------------------|------------------------------------------------------|
+| Environment  | MAINNET \| TESTNET                                                                     | The environment to use when initialising the client. |
+| Interval     | '1M' \| '5M' \| '15M' \| '30M' \| '1H' \| '2H' \| '4H' \| '8H' \| '1D' \| '3D' \| '1W' | The interval to use when fetching K-line data.       |
+| MarginAssets | USDB                                                                                   | Symbol values of supported margin assets.            |
+| OrderStatus  | CANCELLED \| EXPIRED \| FILLED \| OPEN \| PENDING \| REJECTED                          | Defines the possible states an order can be in.      |
+| OrderType    | LIMIT \| LIMIT_MAKER \| MARKET                                                         | Order types for building order payloads.             |
+| TimeInForce  | GTC \| FOK \| IOC                                                                      | Time in force values for building order payloads.    |
+
+### Further support
+
 For more detailed information on specific endpoints, please refer to the official [100x API docs](https://100x.readme.io/reference/100x-api-introduction). Each function in this client contains detailed JSDocs on arguments and return types to aid the developer experience as well as links to their respective endpoints within the official docs.
 
 ## Contributing
