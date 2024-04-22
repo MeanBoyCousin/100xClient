@@ -53,7 +53,7 @@ const Client = new HundredXClient(MY_PRIVATE_KEY)
 
 ## Getting started
 
-To get started, you will need to deposit funds and make a trade. Let's look at how we can do that now. If you're in need of testnet funds, please head over to the [100x Discord sever](https://discord.gg/100xdex) where we will be happy to help.
+To get started, you will need to deposit funds and make a trade. Let's look at how we can do that now. If you're in need of testnet funds, please head over to the [100x Discord server](https://discord.gg/100xdex) where we will be happy to help.
 
 ```ts
 import HundredXClient from '100x-client'
@@ -105,7 +105,7 @@ Want to contribute? Check out that [contributing guide](https://github.com/MeanB
 
 ## Support
 
-Having troubles getting started? Feel free to join us the official [100x Discord sever](https://discord.gg/100xdex) where you can get full support from the team.
+Having troubles getting started? Feel free to join us the official [100x Discord server](https://discord.gg/100xdex) where you can get full support from the team.
 
 ## License
 
