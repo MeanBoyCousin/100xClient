@@ -8,6 +8,7 @@
 /lib
 .tsup
 /src/sandbox.ts
+*.tgz
 
 # debug
 yarn-debug.log*

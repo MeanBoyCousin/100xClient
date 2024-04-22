@@ -22,7 +22,7 @@ enum MarginAssets {
 }
 
 enum OrderStatus {
-  CANCELED = 'CANCELLED',
+  CANCELLED = 'CANCELLED',
   EXPIRED = 'EXPIRED',
   FILLED = 'FILLED',
   OPEN = 'OPEN',
