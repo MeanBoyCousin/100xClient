@@ -75,7 +75,7 @@ class HundredXClient {
   readonly privateKey: HexString
   readonly #publicClient: PublicClient
   readonly rpc: string
-  readonly subAccountId: number
+  subAccountId: number
   readonly verifierAddress: HexString
   readonly #walletClient: WalletClient
 
@@ -142,8 +142,6 @@ class HundredXClient {
     if (debug) this.#logger.info({ msg: 'Debug mode enabled' })
 
     if (environment === 'mainnet') this.#refer()
-
-    Object.freeze(this)
   }
 
   /**
@@ -290,6 +288,18 @@ class HundredXClient {
       await sleep(1000)
       await this.#waitForTransaction(hash, '')
     }
+  }
+
+  // -------
+  // Setters
+  // -------
+
+  /**
+   * Switch sub-account ID.
+   */
+  set setSubAccountId(subAccountId: number) {
+    this.#logger.info({ msg: `Switching to sub-account ${subAccountId}.` })
+    this.subAccountId = subAccountId
   }
 
   // --------------
