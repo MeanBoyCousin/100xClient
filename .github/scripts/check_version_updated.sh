@@ -1,17 +1,24 @@
 #!/bin/bash
 
-NEW_VERSION=$(cat package.json | jq .version)
+NEW_VERSION=$(jq -r .version package.json)
 
 git fetch origin master --depth 1
 git checkout origin/master
 
-CURRENT_VERSION=$(cat package.json | jq .version)
+CURRENT_VERSION=$(jq -r .version package.json)
 
 echo NEW_VERSION: $NEW_VERSION
 echo CURRENT_VERSION: $CURRENT_VERSION
 
 if [ $NEW_VERSION == $CURRENT_VERSION ]; then
   echo Package version needs to be updated before merging into master.
+  exit 1
+fi
+
+CHANGE_LOG_MESSAGE=$(awk "/$NEW_VERSION/{flag=1;next} /##/{flag=0} flag" CHANGELOG.md)
+
+if [ -z "$CHANGE_LOG_MESSAGE" ]; then
+  echo No changelog entry found for new version.
   exit 1
 fi
 
