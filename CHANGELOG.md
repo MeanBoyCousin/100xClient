@@ -16,3 +16,10 @@
 - Added missing entry points to package.json.
 - Tweaks to the TypeScript config.
 - Updated various docs.
+
+## 1.0.3
+
+- Change log updates are now checked during PR CI runs.
+- Change log notes are now appended to releases.
+- Added `tsx` as a missing dev dependency.
+- Users can now hot swap between sub-accounts.
