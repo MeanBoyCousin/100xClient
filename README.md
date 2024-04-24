@@ -2,9 +2,9 @@
   <img alt="100x Logo" src="https://app.100x.finance/brand/100x-bg-blue.webp" />
 </p>
 
-![Build](https://img.shields.io/github/actions/workflow/status/MeanBoyCousin/100xClient/release.yml?style=flat-square&label=Build&color=%234177f6)
-![NPM Version](https://img.shields.io/npm/v/100x-client?style=flat-square&label=NPM&color=%234177f6)
-![Discord](https://img.shields.io/discord/1203621012659249192?style=flat-square&logo=discord&logoColor=%23fff&label=Discord&color=%234177f6)
+![Build](https://img.shields.io/github/actions/workflow/status/MeanBoyCousin/100xClient/release.yml?style=flat-square&label=Build&color=%234177f6&link=https://github.com/MeanBoyCousin/100xClient/actions/workflows/release.yml)
+![NPM Version](https://img.shields.io/npm/v/100x-client?style=flat-square&label=NPM&color=%234177f6&link=https://www.npmjs.com/package/100x-client)
+![Discord](https://img.shields.io/discord/1203621012659249192?style=flat-square&logo=discord&logoColor=%23fff&label=Discord&color=%234177f6&link=https://discord.gg/100xdex)
 
 Interact with the [100x decentralized exchange](https://100x.finance/) and trade pre-launch tokens, BTC, ETH, SOL, BLUR and other cryptocurrency perp futures with leverage. Live on [Blast](https://blast.io/en).
 
