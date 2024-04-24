@@ -16,3 +16,8 @@
 - Added missing entry points to package.json.
 - Tweaks to the TypeScript config.
 - Updated various docs.
+
+## 1.0.3
+
+- Testing
+- Workflow updates
