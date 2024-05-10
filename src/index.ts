@@ -983,7 +983,7 @@ class HundredXClient {
    * @param orderArgs.productId The product identifier for the order.
    * @param orderArgs.quantity The quantity of the order.
    * @param [orderArgs.timeInForce] (Optional) The time in force for the order (default: FOK). Use the {@link TimeInForce} enum.
-   * @param [orderArgs.slippage] (Optional) The percentage by which to adjust the price when orderType is {@link OrderType.MARKET}.
+   * @param [orderArgs.slippage] (Optional) The percentage by which to adjust the price when orderType is {@link OrderType.MARKET} (default: 2.5%).
    * @returns A promise that resolves to an object with either the order or an error.
    * @throws {Error} Thrown if an error occurs during the order process. The error object may contain details from the API response or a generic message.
    */
