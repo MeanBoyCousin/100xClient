@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="100x Logo" src="https://app.100x.finance/brand/100x-bg-blue.webp" />
+  <img alt="100x Logo" src="https://app.100x.finance/brand/100x-trade-perps.webp" />
 </p>
 
 ![Build](https://img.shields.io/github/actions/workflow/status/MeanBoyCousin/100xClient/release.yml?style=flat-square&label=Build&color=%234177f6&link=https://github.com/MeanBoyCousin/100xClient/actions/workflows/release.yml)
@@ -32,12 +32,12 @@ const Client = new HundredXClient(MY_PRIVATE_KEY)
 
 The client can also accept a configuration object as the second parameter.
 
-| Key          | Type                   | Default                        | Description                                                               |
-|--------------|------------------------|--------------------------------|---------------------------------------------------------------------------|
-| debug        | boolean                | false                          | Used to enable debug mode when running the client for additional logging. |
-| environment  | 'testnet' \| 'mainnet' | 'testnet'                      | Specify the environment you wish to trade in.                             |
-| rpc          | string                 | Blast RPC based on environment | Specify a custom RPC url to used.                                         |
-| subAccountId | number                 | 1                              | Specify a sub-account ID to use. This can be from 1-255.                  |
+| Key          | Type                     | Default                        | Description                                                               |
+|--------------|--------------------------|--------------------------------|---------------------------------------------------------------------------|
+| debug        | `boolean`                | `false`                          | Used to enable debug mode when running the client for additional logging. |
+| environment  | `'testnet' \| 'mainnet'` | `'testnet'`                      | Specify the environment you wish to trade in.                             |
+| rpc          | `string`                 | `Blast RPC based on environment` | Specify a custom RPC url to used.                                         |
+| subAccountId | `number`                 | `1`                              | Specify a sub-account ID to use. This can be from 1-255.                  |
 
 ```ts
 import HundredXClient from '100x-client'
@@ -88,14 +88,14 @@ if (success) {
 
 A series of useful enums can be imported from `100x-client/enums` and used to help match against responses or compose payloads.
 
-| Name         | Values                                                                                 | Description                                          |
-|--------------|----------------------------------------------------------------------------------------|------------------------------------------------------|
-| Environment  | MAINNET \| TESTNET                                                                     | The environment to use when initialising the client. |
-| Interval     | '1M' \| '5M' \| '15M' \| '30M' \| '1H' \| '2H' \| '4H' \| '8H' \| '1D' \| '3D' \| '1W' | The interval to use when fetching K-line data.       |
-| MarginAssets | USDB                                                                                   | Symbol values of supported margin assets.            |
-| OrderStatus  | CANCELLED \| EXPIRED \| FILLED \| OPEN \| PENDING \| REJECTED                          | Defines the possible states an order can be in.      |
-| OrderType    | LIMIT \| LIMIT_MAKER \| MARKET                                                         | Order types for building order payloads.             |
-| TimeInForce  | GTC \| FOK \| IOC                                                                      | Time in force values for building order payloads.    |
+| Name         | Values                                                                                   | Description                                          |
+|--------------|------------------------------------------------------------------------------------------|------------------------------------------------------|
+| Environment  | `MAINNET \| TESTNET`                                                                     | The environment to use when initialising the client. |
+| Interval     | `'1M' \| '5M' \| '15M' \| '30M' \| '1H' \| '2H' \| '4H' \| '8H' \| '1D' \| '3D' \| '1W'` | The interval to use when fetching K-line data.       |
+| MarginAssets | `USDB`                                                                                   | Symbol values of supported margin assets.            |
+| OrderStatus  | `CANCELLED \| EXPIRED \| FILLED \| OPEN \| PENDING \| REJECTED`                          | Defines the possible states an order can be in.      |
+| OrderType    | `LIMIT \| LIMIT_MAKER \| MARKET`                                                         | Order types for building order payloads.             |
+| TimeInForce  | `GTC \| FOK \| IOC`                                                                      | Time in force values for building order payloads.    |
 
 ### Further support
 

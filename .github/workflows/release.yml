@@ -46,6 +46,11 @@ jobs:
       - name: Build package
         run: yarn build
 
+      - name: Clean package.json
+        run: |
+          echo "$(jq 'del(.scripts, .devDependencies)' package.json)" > package.json
+        shell: bash
+
       - name: Create release
         id: create_release
         uses: actions/create-release@v1

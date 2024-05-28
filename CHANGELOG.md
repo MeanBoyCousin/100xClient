@@ -23,3 +23,10 @@
 - Change log notes are now appended to releases.
 - Added `tsx` as a missing dev dependency.
 - Users can now hot swap between sub-accounts.
+
+## 1.1.0
+
+- Scripts and dev dependencies are now cleaned from package.json before building the package.
+- README updates.
+- Mainnet contracts now up to date.
+- No longer mocking contract addresses and API URL.

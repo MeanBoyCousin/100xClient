@@ -36,9 +36,9 @@ describe('The HundredXClient withdraw function', () => {
     ).toEqual(address)
     expect(call).toMatchInlineSnapshot(`
       [
-        "https://api.ciaobella.dev/v1/withdraw",
+        "https://api.staging.100x.finance/v1/withdraw",
         {
-          "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","asset":"0x79a59c326c715ac2d31c169c85d1232319e341ce","subAccountId":1,"nonce":17098297600000000,"quantity":"100000000000000000000","signature":"0x114822252331056162f0d4c5d7c703dd14aec0b2cc01c28bbdead3963735c68660ad5d2868e8f8f88e98855cab9caa4eb48f9da05308b6c11100d1d8f6c227df1c"}",
+          "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","asset":"0x79a59c326c715ac2d31c169c85d1232319e341ce","subAccountId":1,"nonce":17098297600000000,"quantity":"100000000000000000000","signature":"0x03e35e3d0557f7a14f7631b699f7253449882705642e51debacd08df78bf03843419e37d4ce776cf319fc022277ea861fc229b14f42d03ebb18d094ccb2b22ff1c"}",
           "method": "POST",
         },
       ]
