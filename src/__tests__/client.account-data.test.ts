@@ -37,7 +37,7 @@ describe('The HundredXClient', () => {
       ).toEqual(address)
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/balances?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0xeeeabb738b08cce6097a3a64289cf90fc4d5802c4b49c8050f879654d7d3d0061fea6f9dbcf18b2eedf5e26778a24fb64cf41ab05be615a57891112e6348e0231c&subAccountId=1",
+          "https://api.staging.100x.finance/v1/balances?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0x4868fc61daa6b85c0beb6ea6a4fbf48eb697dd0b2fbd90e146c237a1038d37f8759a8d059b98d5c5971ac377bf5306888953f07f25724240ec510b3e6927da871b&subAccountId=1",
           undefined,
         ]
       `)
@@ -105,7 +105,7 @@ describe('The HundredXClient', () => {
       ).toEqual(address)
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/positionRisk?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0xeeeabb738b08cce6097a3a64289cf90fc4d5802c4b49c8050f879654d7d3d0061fea6f9dbcf18b2eedf5e26778a24fb64cf41ab05be615a57891112e6348e0231c&subAccountId=1",
+          "https://api.staging.100x.finance/v1/positionRisk?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0x4868fc61daa6b85c0beb6ea6a4fbf48eb697dd0b2fbd90e146c237a1038d37f8759a8d059b98d5c5971ac377bf5306888953f07f25724240ec510b3e6927da871b&subAccountId=1",
           undefined,
         ]
       `)
@@ -157,7 +157,7 @@ describe('The HundredXClient', () => {
 
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/positionRisk?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0xeeeabb738b08cce6097a3a64289cf90fc4d5802c4b49c8050f879654d7d3d0061fea6f9dbcf18b2eedf5e26778a24fb64cf41ab05be615a57891112e6348e0231c&subAccountId=1&symbol=blastperp",
+          "https://api.staging.100x.finance/v1/positionRisk?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0x4868fc61daa6b85c0beb6ea6a4fbf48eb697dd0b2fbd90e146c237a1038d37f8759a8d059b98d5c5971ac377bf5306888953f07f25724240ec510b3e6927da871b&subAccountId=1&symbol=blastperp",
           undefined,
         ]
       `)
@@ -235,7 +235,7 @@ describe('The HundredXClient', () => {
       ).toEqual(address)
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/openOrders?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0xeeeabb738b08cce6097a3a64289cf90fc4d5802c4b49c8050f879654d7d3d0061fea6f9dbcf18b2eedf5e26778a24fb64cf41ab05be615a57891112e6348e0231c&subAccountId=1",
+          "https://api.staging.100x.finance/v1/openOrders?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0x4868fc61daa6b85c0beb6ea6a4fbf48eb697dd0b2fbd90e146c237a1038d37f8759a8d059b98d5c5971ac377bf5306888953f07f25724240ec510b3e6927da871b&subAccountId=1",
           undefined,
         ]
       `)
@@ -295,7 +295,7 @@ describe('The HundredXClient', () => {
 
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/openOrders?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0xeeeabb738b08cce6097a3a64289cf90fc4d5802c4b49c8050f879654d7d3d0061fea6f9dbcf18b2eedf5e26778a24fb64cf41ab05be615a57891112e6348e0231c&subAccountId=1&symbol=blastperp",
+          "https://api.staging.100x.finance/v1/openOrders?account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&signature=0x4868fc61daa6b85c0beb6ea6a4fbf48eb697dd0b2fbd90e146c237a1038d37f8759a8d059b98d5c5971ac377bf5306888953f07f25724240ec510b3e6927da871b&subAccountId=1&symbol=blastperp",
           undefined,
         ]
       `)

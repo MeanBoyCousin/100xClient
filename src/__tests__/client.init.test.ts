@@ -39,7 +39,7 @@ describe('The HundredXClient', () => {
       [
         "https://api.100x.finance/v1/referral/add-referee",
         {
-          "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","code":"kickflip","signature":"0x5da080cbf906558a2642b7642572b3a5c75966e2bf3f9a8c5b86e77ef7b6395c3557266aa6971790d65f3c791d68e7894285f18bf16cecf5b9b06b53715fc1d21b"}",
+          "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","code":"kickflip","signature":"0x0bf1266ca5b8542e07d2258e5532613f96dd6ddeedaccb4b3166016711bbd0ad600674fc14fb86b985d79f188928822286f1de586e108824d72dc3fbda49783e1c"}",
           "method": "POST",
         },
       ]

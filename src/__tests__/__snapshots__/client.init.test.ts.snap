@@ -18,12 +18,12 @@ HundredXClient {
   "cancelOrder": [Function],
   "cancelOrders": [Function],
   "chain": 168587773,
-  "ciaoAddress": "0x63bD0ca355Cfc117F5176E5eF3e34A6D60081937",
+  "ciaoAddress": "0x0c3b9472b3923cfe199bae24b5f5bd75fad2bae9",
   "deposit": [Function],
   "domain": {
     "chainId": 168587773n,
     "name": "100x",
-    "verifyingContract": "0x65CbB566D1A6E60107c0c7888761de1AdFa1ccC0",
+    "verifyingContract": "0x02ca4fcb63e2d3c89fa20d86ccdcfc540c683545",
     "version": "0.0.0",
   },
   "environment": "testnet",
@@ -46,7 +46,7 @@ HundredXClient {
   "privateKey": "0xa608cd43cbc3d59bc51443f475b96a4654e956d6cc91783598a8e76a34000174",
   "rpc": "https://test-rpc.quiknode.pro",
   "subAccountId": 2,
-  "verifierAddress": "0x65CbB566D1A6E60107c0c7888761de1AdFa1ccC0",
+  "verifierAddress": "0x02ca4fcb63e2d3c89fa20d86ccdcfc540c683545",
   "withdraw": [Function],
 }
 `;
@@ -69,12 +69,12 @@ HundredXClient {
   "cancelOrder": [Function],
   "cancelOrders": [Function],
   "chain": 168587773,
-  "ciaoAddress": "0x63bD0ca355Cfc117F5176E5eF3e34A6D60081937",
+  "ciaoAddress": "0x0c3b9472b3923cfe199bae24b5f5bd75fad2bae9",
   "deposit": [Function],
   "domain": {
     "chainId": 168587773n,
     "name": "100x",
-    "verifyingContract": "0x65CbB566D1A6E60107c0c7888761de1AdFa1ccC0",
+    "verifyingContract": "0x02ca4fcb63e2d3c89fa20d86ccdcfc540c683545",
     "version": "0.0.0",
   },
   "environment": "testnet",
@@ -93,7 +93,7 @@ HundredXClient {
   "privateKey": "0xa608cd43cbc3d59bc51443f475b96a4654e956d6cc91783598a8e76a34000174",
   "rpc": "https://sepolia.blast.io",
   "subAccountId": 1,
-  "verifierAddress": "0x65CbB566D1A6E60107c0c7888761de1AdFa1ccC0",
+  "verifierAddress": "0x02ca4fcb63e2d3c89fa20d86ccdcfc540c683545",
   "withdraw": [Function],
 }
 `;

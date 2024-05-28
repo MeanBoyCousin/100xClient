@@ -7,7 +7,7 @@ describe('The API_URL constant', () => {
     expect(API_URL).toMatchInlineSnapshot(`
       {
         "mainnet": "https://api.100x.finance/v1",
-        "testnet": "https://api.ciaobella.dev/v1",
+        "testnet": "https://api.staging.100x.finance/v1",
       }
     `)
   })

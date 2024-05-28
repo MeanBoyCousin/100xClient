@@ -1,10 +1,6 @@
 import { vi } from 'vitest'
 import createFetchMock from 'vitest-fetch-mock'
 
-vi.mock('src/constants/api.ts')
-vi.mock('src/constants/ciao.ts')
-vi.mock('src/constants/verifier.ts')
-
 vi.spyOn(console, 'error').mockImplementation(() => {})
 vi.spyOn(console, 'log').mockImplementation(() => {})
 

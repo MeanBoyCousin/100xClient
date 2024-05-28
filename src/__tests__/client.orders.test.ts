@@ -49,9 +49,9 @@ describe('The HundredXClient', () => {
       ).toEqual(address)
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/order",
+          "https://api.staging.100x.finance/v1/order",
           {
-            "body": "{"expiration":1712421760000,"nonce":17098297600000000,"price":"3536240000000000000000","quantity":"1000000000000000","signature":"0x90c49b3eaef966462164fbb2d47f97eff274501ceff38f2c70586983d6c66e5e409497f66435feb0dcc5c3528bbca95c099090104375ca4c66ab41edd8e58f341c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":2,"productId":1002,"subAccountId":1,"timeInForce":1}",
+            "body": "{"expiration":1712421760000,"nonce":17098297600000000,"price":"3536240000000000000000","quantity":"1000000000000000","signature":"0xe54009ca1e888a7d98316371517662db4c59e9264d62b364f1030b893cecf60b3c895ac45d4c86793399cdfae7e4759c2414af7ebc2fe80b7a0e907e8771fb551b","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":2,"productId":1002,"subAccountId":1,"timeInForce":1}",
             "method": "POST",
           },
         ]
@@ -119,9 +119,9 @@ describe('The HundredXClient', () => {
       ).toEqual(address)
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/order",
+          "https://api.staging.100x.finance/v1/order",
           {
-            "body": "{"expiration":1800000000000,"nonce":123,"price":"3450000000000000000000","quantity":"1000000000000000","signature":"0x1c434d24e714578f6f1966b0adf9cfbe574381c0c9d49b6d2c454e2db7b3825944e22d72d44acdc3aeec2d4b6642e73eb89c42b7582a568ce46b7f21859a38811b","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":0,"productId":1002,"subAccountId":1,"timeInForce":2}",
+            "body": "{"expiration":1800000000000,"nonce":123,"price":"3450000000000000000000","quantity":"1000000000000000","signature":"0x76ebeb862bc07200a55ebec586f1715acb88f77ae18865fd57cd34352471eeaf70082bcfe24200e0abef682fe1f96c9d1649f1156c6ae920ebe542e93316e9e61c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":0,"productId":1002,"subAccountId":1,"timeInForce":2}",
             "method": "POST",
           },
         ]
@@ -344,9 +344,9 @@ describe('The HundredXClient', () => {
       ).toEqual(address)
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/order",
+          "https://api.staging.100x.finance/v1/order",
           {
-            "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","orderId":"0x3505c6219b1f51cf216e432b153f8637c1fa9342520bd7c780bd80dafe0eed94","productId":1002,"subAccountId":1,"signature":"0x398240c7e0542ab55b4a49ea8ad11808938365923bd7e8fc42c8d101f121c228057b6e234bfc3e330432ab0a87a21d7704d790e4611f9f6069d1929eb0071a031b"}",
+            "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","orderId":"0x3505c6219b1f51cf216e432b153f8637c1fa9342520bd7c780bd80dafe0eed94","productId":1002,"subAccountId":1,"signature":"0x84e59cbf2142640295e93c68c0ec00757a26b6d3ada13a052abb29e9aa0d9f902834784f187c6a316d03b4bb15b535584ae2498407d14a17028185694b12139a1b"}",
             "method": "DELETE",
           },
         ]
@@ -446,9 +446,9 @@ describe('The HundredXClient', () => {
       ).toEqual(address)
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/openOrders",
+          "https://api.staging.100x.finance/v1/openOrders",
           {
-            "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","productId":1002,"subAccountId":1,"signature":"0x1a33343cdbbf084b254929943d818903e4ee8cd7be6f15bd42ad8938c4a2279561ab5dc19998163196b7963d10b30f2fce9d47968050cbc2bfb4bbafd184276a1c"}",
+            "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","productId":1002,"subAccountId":1,"signature":"0x2ad1ed1080d97172760ea6474dd1eb76742f5333f106e62219dbb64282964d9f395815055519ed4f37c2f55b475568240ac51eca27e077b3d8157c3c0da2c5961c"}",
             "method": "DELETE",
           },
         ]
@@ -521,9 +521,9 @@ describe('The HundredXClient', () => {
       ).toEqual(address)
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/order/cancel-and-replace",
+          "https://api.staging.100x.finance/v1/order/cancel-and-replace",
           {
-            "body": "{"idToCancel":"0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f","newOrder":{"expiration":1712421760000,"nonce":17098297600000000,"price":"3455000000000000000000","quantity":"1000000000000000","signature":"0x6235832ac08693d6cfaba12a4ae9918eabf3ec057500e15c632f0dca7eaa0b1c419353fa8368ec6f009c085683575fa8a8057223fa267e350c0284e33f181e011c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":1,"productId":1002,"subAccountId":1,"timeInForce":0}}",
+            "body": "{"idToCancel":"0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f","newOrder":{"expiration":1712421760000,"nonce":17098297600000000,"price":"3455000000000000000000","quantity":"1000000000000000","signature":"0x6a076f90627354d3d58647d6f53aaf7f75aaf7539f51112176efccc3f6e370fb7fd28aa4f8c9075b8c5f1454958286b585bfb532123608430623264abb8bf76b1c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":1,"productId":1002,"subAccountId":1,"timeInForce":0}}",
             "method": "POST",
           },
         ]
@@ -591,9 +591,9 @@ describe('The HundredXClient', () => {
       ).toEqual(address)
       expect(call).toMatchInlineSnapshot(`
         [
-          "https://api.ciaobella.dev/v1/order/cancel-and-replace",
+          "https://api.staging.100x.finance/v1/order/cancel-and-replace",
           {
-            "body": "{"idToCancel":"0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f","newOrder":{"expiration":1800000000000,"nonce":123,"price":"3455000000000000000000","quantity":"1000000000000000","signature":"0xa1662d22629d41396666676ba99f9de7575c9003e7c8bc9e70b95c9bdbec38762c889af2a97ce7ed4305860f2ade24489746a6d7fc3ca8f1ea7a53f98d607e8a1c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":1,"productId":1002,"subAccountId":1,"timeInForce":0}}",
+            "body": "{"idToCancel":"0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f","newOrder":{"expiration":1800000000000,"nonce":123,"price":"3455000000000000000000","quantity":"1000000000000000","signature":"0xe2a84fbf510c19c1ce9b48e0b76f404a1d387751601bd50714a2e2a3ac81eddc5d7d4810a426a8ce34dc420c608faeb6ced75dbbd89ddf90ab72c8552779091f1c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":1,"productId":1002,"subAccountId":1,"timeInForce":0}}",
             "method": "POST",
           },
         ]
