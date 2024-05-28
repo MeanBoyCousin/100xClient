@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="100x Logo" src="https://app.100x.finance/brand/100x-bg-blue.webp" />
+  <img alt="100x Logo" src="https://app.100x.finance/brand/100x-trade-perps.webp" />
 </p>
 
 ![Build](https://img.shields.io/github/actions/workflow/status/MeanBoyCousin/100xClient/release.yml?style=flat-square&label=Build&color=%234177f6&link=https://github.com/MeanBoyCousin/100xClient/actions/workflows/release.yml)
