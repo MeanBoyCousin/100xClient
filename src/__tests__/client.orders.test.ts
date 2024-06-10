@@ -22,9 +22,9 @@ describe('The HundredXClient', () => {
       const result = await Client.placeOrder({
         isBuy: true,
         price: 3450,
+        priceIncrement: 100000000000000000n,
         productId: 1002,
         quantity: 0.001,
-        priceIncrement: 100000000000000000n,
       })
       const call = fetchMock.mock.calls[0]
 
@@ -35,7 +35,7 @@ describe('The HundredXClient', () => {
             account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
             isBuy: true,
             expiration: 1712421760000n,
-            nonce: 17098297600000000n,
+            nonce: 1709829760000000n,
             orderType: 2,
             price: 3536200000000000000000n,
             productId: 1002,
@@ -52,7 +52,7 @@ describe('The HundredXClient', () => {
         [
           "https://api.staging.100x.finance/v1/order",
           {
-            "body": "{"expiration":1712421760000,"nonce":17098297600000000,"price":"3536200000000000000000","quantity":"1000000000000000","signature":"0x023a709b408126f6e3d8bf6e389ddb30eaca51921df2531c8cc75a86b1daa229264cd326a5b3051984875740cdf549d4df4cdfd2384caea8a23aa6af80d1e53a1b","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":2,"productId":1002,"subAccountId":1,"timeInForce":1}",
+            "body": "{"expiration":1712421760000,"nonce":1709829760000000,"price":"3536200000000000000000","quantity":"1000000000000000","signature":"0x8c78e174166913aeee11b427169e1a33ba6ecd06dbdccc1fd60da4e33b8ce0a01e17d420110bbb5bd07af7d8ae19b83a443cab3885f20a863d262014f3e1ce481b","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":2,"productId":1002,"subAccountId":1,"timeInForce":1}",
             "method": "POST",
           },
         ]
@@ -62,7 +62,7 @@ describe('The HundredXClient', () => {
       })
     })
 
-    it('should allow a user to successfully place an order with all args passed', async () => {
+    it('should allow a user to successfully place an order with all args passed (limit order)', async () => {
       fetchMock.mockResponse(JSON.stringify(customOrder))
 
       const Client = new HundredXClient(privateKey)
@@ -468,7 +468,7 @@ describe('The HundredXClient', () => {
             account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
             isBuy: true,
             expiration: 1712421760000n,
-            nonce: 17098297600000000n,
+            nonce: 1709829760000000n,
             orderType: 1,
             price: 3455000000000000000000n,
             productId: 1002,
@@ -485,7 +485,7 @@ describe('The HundredXClient', () => {
         [
           "https://api.staging.100x.finance/v1/order/cancel-and-replace",
           {
-            "body": "{"idToCancel":"0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f","newOrder":{"expiration":1712421760000,"nonce":17098297600000000,"price":"3455000000000000000000","quantity":"1000000000000000","signature":"0x6a076f90627354d3d58647d6f53aaf7f75aaf7539f51112176efccc3f6e370fb7fd28aa4f8c9075b8c5f1454958286b585bfb532123608430623264abb8bf76b1c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":1,"productId":1002,"subAccountId":1,"timeInForce":0}}",
+            "body": "{"idToCancel":"0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f","newOrder":{"expiration":1712421760000,"nonce":1709829760000000,"price":"3455000000000000000000","quantity":"1000000000000000","signature":"0x6438968d739df7ffade1aa28d03d0ebbd8c3297134402d02fdbcd9f69bdf1ee80525712e93012093329f0ac55226992a4699973de59ca687a91258054dbbc8d21c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":1,"productId":1002,"subAccountId":1,"timeInForce":0}}",
             "method": "POST",
           },
         ]

@@ -243,9 +243,9 @@ class HundredXClient {
   /**
    * Generates a nonce.
    *
-   * @returns The current timestamp in nanoseconds.
+   * @returns The current timestamp in microseconds.
    */
-  #getNonce = (): number => Math.floor((Date.now() + performance.now()) * 10000)
+  #getNonce = (): number => Math.floor((Date.now() + performance.now()) * 1000)
 
   /**
    * Private method to refer the user on class initialisation.
