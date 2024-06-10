@@ -36,6 +36,7 @@ interface OrderArgs {
   nonce?: number
   orderType?: OrderType
   price: number
+  priceIncrement?: bigint
   productId: number
   quantity: number
   slippage?: number

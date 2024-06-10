@@ -14,6 +14,7 @@ describe('The HundredXClient', () => {
     await Client.placeOrder({
       isBuy: true,
       price: 3450,
+      priceIncrement: 100000000000000000n,
       productId: 1002,
       quantity: 0.001,
     })
@@ -27,6 +28,7 @@ describe('The HundredXClient', () => {
     await Client.placeOrder({
       isBuy: true,
       price: 3450,
+      priceIncrement: 100000000000000000n,
       productId: 1002,
       quantity: 0.001,
     })

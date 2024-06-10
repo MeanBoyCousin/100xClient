@@ -186,7 +186,7 @@ export const marketFOKOrder = {
   isBuy: true,
   orderType: 2,
   timeInForce: 1,
-  price: '3450000000000000000000',
+  price: '3536200000000000000000',
   quantity: '1000000000000000',
   nonce: 1712421760000,
   sender: address,
@@ -202,6 +202,7 @@ export const customOrder = {
   ...marketFOKOrder,
   orderType: 0,
   timeInForce: 2,
+  price: '3450000000000000000000',
   nonce: 123,
   expiry: 1800000000000,
 }
