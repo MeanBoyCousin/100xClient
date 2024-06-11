@@ -150,13 +150,21 @@ class HundredXClient {
    * @param isBuy Whether to buy (true) or sell (false).
    * @param price The price of the order.
    * @param slippage The percentage by which to adjust the price.
+   * @param priceIncrement The precision the price should be rounded to.
+   * This value can be found under the `increment` key when calling the `getProduct` method.
    * @returns A new price number adjusted by the specified slippage.
    */
-  #adjustPriceForSlippage = (isBuy: boolean, price: number, slippage: number) => {
+  #adjustPriceForSlippage = (
+    isBuy: boolean,
+    price: number,
+    slippage: number,
+    priceIncrement: bigint,
+  ) => {
     const slippagePercentage = slippage / 100
     const multiplier = isBuy ? 1 + slippagePercentage : 1 - slippagePercentage
+    const precision = 18 - Math.log10(Number(priceIncrement))
 
-    return toRounded(price * multiplier)
+    return toRounded(price * multiplier, precision)
   }
 
   /**
@@ -235,9 +243,9 @@ class HundredXClient {
   /**
    * Generates a nonce.
    *
-   * @returns The current timestamp in nanoseconds.
+   * @returns The current timestamp in microseconds.
    */
-  #getNonce = (): number => Math.floor((Date.now() + performance.now()) * 10000)
+  #getNonce = (): number => Math.floor((Date.now() + performance.now()) * 1000)
 
   /**
    * Private method to refer the user on class initialisation.
@@ -980,6 +988,8 @@ class HundredXClient {
    * @param [orderArgs.nonce] (Optional) A unique identifier for the order. (default: current unix timestamp in nano seconds).
    * @param [orderArgs.orderType] (Optional) The type of order (default: market). Use the {@link OrderType} enum.
    * @param orderArgs.price The price of the order.
+   * @param [orderArgs.priceIncrement] The price precision for the product. This is only required for MARKET orders.
+   * This value can be found under the `increment` key when calling the `getProduct` method.
    * @param orderArgs.productId The product identifier for the order.
    * @param orderArgs.quantity The quantity of the order.
    * @param [orderArgs.timeInForce] (Optional) The time in force for the order (default: FOK). Use the {@link TimeInForce} enum.
@@ -993,14 +1003,24 @@ class HundredXClient {
     nonce = this.#getNonce(),
     orderType = OrderType.MARKET,
     price,
+    priceIncrement,
     productId,
     quantity,
     slippage = 2.5,
     timeInForce = TimeInForce.FOK,
   }: OrderArgs): Promise<PlaceOrderReturnType> => {
+    if (orderType === OrderType.MARKET && priceIncrement === undefined) {
+      return {
+        error: { message: 'A priceIncrement is required for market orders' },
+        order: {},
+      }
+    }
+
     const bigPrice =
       orderType === OrderType.MARKET
-        ? this.#toWei(this.#adjustPriceForSlippage(isBuy, price, slippage))
+        ? this.#toWei(
+            this.#adjustPriceForSlippage(isBuy, price, slippage, priceIncrement as bigint),
+          )
         : this.#toWei(price)
     const bigQuantity = this.#toWei(quantity)
 

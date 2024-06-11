@@ -26,7 +26,7 @@ describe('The HundredXClient withdraw function', () => {
           account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
           asset: USDB,
           subAccountId: 1,
-          nonce: 17098297600000000n,
+          nonce: 1709829760000000n,
           quantity: 100000000000000000000n,
         },
         primaryType: 'Withdraw',
@@ -38,7 +38,7 @@ describe('The HundredXClient withdraw function', () => {
       [
         "https://api.staging.100x.finance/v1/withdraw",
         {
-          "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","asset":"0x79a59c326c715ac2d31c169c85d1232319e341ce","subAccountId":1,"nonce":17098297600000000,"quantity":"100000000000000000000","signature":"0x03e35e3d0557f7a14f7631b699f7253449882705642e51debacd08df78bf03843419e37d4ce776cf319fc022277ea861fc229b14f42d03ebb18d094ccb2b22ff1c"}",
+          "body": "{"account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","asset":"0x79a59c326c715ac2d31c169c85d1232319e341ce","subAccountId":1,"nonce":1709829760000000,"quantity":"100000000000000000000","signature":"0x85b5663e45bdf5ac66d23741b67a0fea118c93c38c98099abaebac21607475ed15ff4d3287c178b90f219eb3b2f9e3e7b940a18da6d3bb76b2ae6783976374791b"}",
           "method": "POST",
         },
       ]

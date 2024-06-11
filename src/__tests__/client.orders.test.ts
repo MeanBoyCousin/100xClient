@@ -14,7 +14,7 @@ describe('The HundredXClient', () => {
   })
 
   describe('placeOrder function', () => {
-    it('should allow a user to successfully place an order', async () => {
+    it('should allow a user to successfully place a market order', async () => {
       fetchMock.mockResponse(JSON.stringify(marketFOKOrder))
 
       const Client = new HundredXClient(privateKey)
@@ -22,6 +22,7 @@ describe('The HundredXClient', () => {
       const result = await Client.placeOrder({
         isBuy: true,
         price: 3450,
+        priceIncrement: 100000000000000000n,
         productId: 1002,
         quantity: 0.001,
       })
@@ -34,9 +35,9 @@ describe('The HundredXClient', () => {
             account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
             isBuy: true,
             expiration: 1712421760000n,
-            nonce: 17098297600000000n,
+            nonce: 1709829760000000n,
             orderType: 2,
-            price: 3536240000000000000000n,
+            price: 3536200000000000000000n,
             productId: 1002,
             quantity: 1000000000000000n,
             subAccountId: 1,
@@ -51,36 +52,17 @@ describe('The HundredXClient', () => {
         [
           "https://api.staging.100x.finance/v1/order",
           {
-            "body": "{"expiration":1712421760000,"nonce":17098297600000000,"price":"3536240000000000000000","quantity":"1000000000000000","signature":"0xe54009ca1e888a7d98316371517662db4c59e9264d62b364f1030b893cecf60b3c895ac45d4c86793399cdfae7e4759c2414af7ebc2fe80b7a0e907e8771fb551b","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":2,"productId":1002,"subAccountId":1,"timeInForce":1}",
+            "body": "{"expiration":1712421760000,"nonce":1709829760000000,"price":"3536200000000000000000","quantity":"1000000000000000","signature":"0x8c78e174166913aeee11b427169e1a33ba6ecd06dbdccc1fd60da4e33b8ce0a01e17d420110bbb5bd07af7d8ae19b83a443cab3885f20a863d262014f3e1ce481b","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":2,"productId":1002,"subAccountId":1,"timeInForce":1}",
             "method": "POST",
           },
         ]
       `)
       expect(result).toEqual({
-        order: {
-          account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
-          createdAt: 1712829961877,
-          expiry: 1712421760000,
-          id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f',
-          isBuy: true,
-          nonce: 1712421760000,
-          orderType: 2,
-          price: '3450000000000000000000',
-          productId: 1002,
-          productSymbol: 'ethperp',
-          quantity: '1000000000000000',
-          residualQuantity: '0',
-          sender: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
-          signature:
-            '0x4e6a845046760ac9007f8ecf2e632dcc40cfd4fee6239fd7242f2c0e46a02d4b3a8dc8aa26298138c2f137a402e81f267a462edb4ab2dca0534b99179dc787da1c',
-          status: 'FILLED',
-          subAccountId: 1,
-          timeInForce: 1,
-        },
+        order: marketFOKOrder,
       })
     })
 
-    it('should allow a user to successfully place an order with all args passed', async () => {
+    it('should allow a user to successfully place an order with all args passed (limit order)', async () => {
       fetchMock.mockResponse(JSON.stringify(customOrder))
 
       const Client = new HundredXClient(privateKey)
@@ -127,26 +109,7 @@ describe('The HundredXClient', () => {
         ]
       `)
       expect(result).toEqual({
-        order: {
-          account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
-          createdAt: 1712829961877,
-          expiry: 1800000000000,
-          id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f',
-          isBuy: true,
-          nonce: 123,
-          orderType: 0,
-          price: '3450000000000000000000',
-          productId: 1002,
-          productSymbol: 'ethperp',
-          quantity: '1000000000000000',
-          residualQuantity: '0',
-          sender: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
-          signature:
-            '0x4e6a845046760ac9007f8ecf2e632dcc40cfd4fee6239fd7242f2c0e46a02d4b3a8dc8aa26298138c2f137a402e81f267a462edb4ab2dca0534b99179dc787da1c',
-          status: 'FILLED',
-          subAccountId: 1,
-          timeInForce: 2,
-        },
+        order: customOrder,
       })
     })
 
@@ -158,6 +121,7 @@ describe('The HundredXClient', () => {
       await Client.placeOrder({
         isBuy: true,
         price: 3450,
+        priceIncrement: 100000000000000000n,
         productId: 1002,
         quantity: 0.001,
         slippage: 1,
@@ -165,16 +129,35 @@ describe('The HundredXClient', () => {
       await Client.placeOrder({
         isBuy: false,
         price: 3450,
+        priceIncrement: 100000000000000000n,
         productId: 1002,
         quantity: 0.001,
-        slippage: 1,
+        slippage: 1.25,
       })
 
       const buyPrice = JSON.parse(fetchMock.mock.calls[0][1]?.body as string).price
       const sellPrice = JSON.parse(fetchMock.mock.calls[1][1]?.body as string).price
 
       expect(buyPrice).toEqual('3484500000000000000000')
-      expect(sellPrice).toEqual('3415500000000000000000')
+      expect(sellPrice).toEqual('3406800000000000000000')
+    })
+
+    it('should return an error for a market order with no priceIncrement', async () => {
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.placeOrder({
+        isBuy: true,
+        price: 3450,
+        productId: 1002,
+        quantity: 0.001,
+      })
+
+      expect(result).toEqual({
+        error: {
+          message: 'A priceIncrement is required for market orders',
+        },
+        order: {},
+      })
     })
 
     it('should handle an error during the order process', async () => {
@@ -185,6 +168,7 @@ describe('The HundredXClient', () => {
       const result = await Client.placeOrder({
         isBuy: true,
         price: 3450,
+        priceIncrement: 100000000000000000n,
         productId: 1002,
         quantity: 0.001,
       })
@@ -205,6 +189,7 @@ describe('The HundredXClient', () => {
       const result = await Client.placeOrder({
         isBuy: true,
         price: 3450,
+        priceIncrement: 100000000000000000n,
         productId: 1002,
         quantity: 0.001,
       })
@@ -230,6 +215,7 @@ describe('The HundredXClient', () => {
         {
           isBuy: true,
           price: 3450,
+          priceIncrement: 100000000000000000n,
           productId: 1002,
           quantity: 0.001,
         },
@@ -252,6 +238,14 @@ describe('The HundredXClient', () => {
         {
           isBuy: true,
           price: 3450,
+          priceIncrement: 100000000000000000n,
+          productId: 1002,
+          quantity: 0.001,
+        },
+        {
+          isBuy: true,
+          price: 3450,
+          priceIncrement: 100000000000000000n,
           productId: 1002,
           quantity: 0.001,
         },
@@ -259,48 +253,16 @@ describe('The HundredXClient', () => {
 
       expect(result).toEqual([
         {
-          order: {
-            account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
-            createdAt: 1712829961877,
-            expiry: 1712421760000,
-            id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f',
-            isBuy: true,
-            nonce: 1712421760000,
-            orderType: 2,
-            price: '3450000000000000000000',
-            productId: 1002,
-            productSymbol: 'ethperp',
-            quantity: '1000000000000000',
-            residualQuantity: '0',
-            sender: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
-            signature:
-              '0x4e6a845046760ac9007f8ecf2e632dcc40cfd4fee6239fd7242f2c0e46a02d4b3a8dc8aa26298138c2f137a402e81f267a462edb4ab2dca0534b99179dc787da1c',
-            status: 'FILLED',
-            subAccountId: 1,
-            timeInForce: 1,
-          },
+          order: marketFOKOrder,
         },
         {
-          order: {
-            account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
-            createdAt: 1712829961877,
-            expiry: 1800000000000,
-            id: '0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f',
-            isBuy: true,
-            nonce: 123,
-            orderType: 0,
-            price: '3450000000000000000000',
-            productId: 1002,
-            productSymbol: 'ethperp',
-            quantity: '1000000000000000',
-            residualQuantity: '0',
-            sender: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
-            signature:
-              '0x4e6a845046760ac9007f8ecf2e632dcc40cfd4fee6239fd7242f2c0e46a02d4b3a8dc8aa26298138c2f137a402e81f267a462edb4ab2dca0534b99179dc787da1c',
-            status: 'FILLED',
-            subAccountId: 1,
-            timeInForce: 2,
+          order: customOrder,
+        },
+        {
+          error: {
+            message: 'A priceIncrement is required for market orders',
           },
+          order: {},
         },
         {
           error: {
@@ -506,7 +468,7 @@ describe('The HundredXClient', () => {
             account: '0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8',
             isBuy: true,
             expiration: 1712421760000n,
-            nonce: 17098297600000000n,
+            nonce: 1709829760000000n,
             orderType: 1,
             price: 3455000000000000000000n,
             productId: 1002,
@@ -523,7 +485,7 @@ describe('The HundredXClient', () => {
         [
           "https://api.staging.100x.finance/v1/order/cancel-and-replace",
           {
-            "body": "{"idToCancel":"0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f","newOrder":{"expiration":1712421760000,"nonce":17098297600000000,"price":"3455000000000000000000","quantity":"1000000000000000","signature":"0x6a076f90627354d3d58647d6f53aaf7f75aaf7539f51112176efccc3f6e370fb7fd28aa4f8c9075b8c5f1454958286b585bfb532123608430623264abb8bf76b1c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":1,"productId":1002,"subAccountId":1,"timeInForce":0}}",
+            "body": "{"idToCancel":"0x08d4079c501e5fbb2153c7fe785ea4648ffcdac411d93511edcb5b18aecc158f","newOrder":{"expiration":1712421760000,"nonce":1709829760000000,"price":"3455000000000000000000","quantity":"1000000000000000","signature":"0x6438968d739df7ffade1aa28d03d0ebbd8c3297134402d02fdbcd9f69bdf1ee80525712e93012093329f0ac55226992a4699973de59ca687a91258054dbbc8d21c","account":"0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8","isBuy":true,"orderType":1,"productId":1002,"subAccountId":1,"timeInForce":0}}",
             "method": "POST",
           },
         ]

@@ -30,3 +30,8 @@
 - README updates.
 - Mainnet contracts now up to date.
 - No longer mocking contract addresses and API URL.
+
+## 1.1.1
+
+- The `placeOrder` method now takes a `priceIncrement` parameter for market orders to ensure correct precision when slippage is applied.
+- Nonces are now generated in microsecond time instead of nanosecond time.
