@@ -169,7 +169,7 @@ describe('The HundredXClient deposit function', () => {
 
     expect(mocks.createWalletClient.writeContract).not.toHaveBeenCalled()
     expect(result).toEqual({
-      error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+      error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
       success: false,
     })
   })

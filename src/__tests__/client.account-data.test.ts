@@ -77,7 +77,7 @@ describe('The HundredXClient', () => {
 
       expect(result).toEqual({
         balances: [],
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
       })
     })
   })
@@ -206,7 +206,7 @@ describe('The HundredXClient', () => {
       const result = await Client.listPositions()
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         positions: [],
       })
     })
@@ -348,7 +348,7 @@ describe('The HundredXClient', () => {
       const result = await Client.listOpenOrders()
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         orders: [],
       })
     })

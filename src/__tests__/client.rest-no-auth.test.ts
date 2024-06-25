@@ -78,7 +78,7 @@ describe('The HundredXClient REST', () => {
       const result = await Client.getProducts()
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         products: [],
       })
     })
@@ -163,7 +163,7 @@ describe('The HundredXClient REST', () => {
       const result = await Client.getProduct(1003)
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         product: {},
       })
     })
@@ -193,7 +193,7 @@ describe('The HundredXClient REST', () => {
       const result = await Client.getServerTime()
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
       })
     })
   })
@@ -359,7 +359,7 @@ describe('The HundredXClient REST', () => {
       const result = await Client.getKlines('ethperp')
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         klines: [],
       })
     })
@@ -451,7 +451,7 @@ describe('The HundredXClient REST', () => {
       const result = await Client.getTickers('ethperp')
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         tickers: {},
       })
     })
@@ -600,7 +600,7 @@ describe('The HundredXClient REST', () => {
       expect(result).toEqual({
         asks: [],
         bids: [],
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
       })
     })
   })
@@ -648,7 +648,7 @@ describe('The HundredXClient REST', () => {
       const result = await Client.calculateMarginRequirement(true, 3000, 1002, 10)
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         required: 0n,
       })
     })

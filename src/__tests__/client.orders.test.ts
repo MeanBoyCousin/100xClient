@@ -195,7 +195,7 @@ describe('The HundredXClient', () => {
       })
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         order: {},
       })
     })
@@ -271,7 +271,7 @@ describe('The HundredXClient', () => {
           order: {},
         },
         {
-          error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+          error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
           order: {},
         },
       ])
@@ -345,7 +345,7 @@ describe('The HundredXClient', () => {
       )
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         success: false,
       })
     })
@@ -377,7 +377,7 @@ describe('The HundredXClient', () => {
           success: false,
         },
         {
-          error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+          error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
           success: false,
         },
       ])
@@ -441,7 +441,7 @@ describe('The HundredXClient', () => {
       const result = await Client.cancelOpenOrdersForProduct(1002)
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         success: false,
       })
     })
@@ -617,7 +617,7 @@ describe('The HundredXClient', () => {
       })
 
       expect(result).toEqual({
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         order: {},
       })
     })
