@@ -35,3 +35,8 @@
 
 - The `placeOrder` method now takes a `priceIncrement` parameter for market orders to ensure correct precision when slippage is applied.
 - Nonces are now generated in microsecond time instead of nanosecond time.
+
+## 1.2.0
+
+- New `trade-history` endpoint added via the `getTradeHistory` method.
+- Fixed a typo in the unknown error message and moved it to a constant for better reusability.
