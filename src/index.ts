@@ -34,6 +34,8 @@ import type {
   ServerTimeReturnType,
   TickerResponse,
   TickerReturnType,
+  TradeHistoryResponse,
+  TradeHistoryReturnType,
   WithdrawReturnType,
 } from './types'
 import type { Logger } from 'pino'
@@ -559,6 +561,43 @@ class HundredXClient {
       return {
         error: { message: UNKNOWN_ERROR },
         tickers: {},
+      }
+    }
+  }
+
+  /**
+   * Get trade history for a product.
+   *
+   * {@link https://100x.readme.io/reference/trade-history}
+   *
+   * @param productSymbol The product symbol to get data for (btcperp, ethperp, etc.).
+   * @param [quantity] (Optional) The quantity of trades to fetch. Maximum value is 500. (default: 10).
+   * @returns A promise that resolves with an object containing the trade history data, or an error object.
+   * @throws {Error} Thrown if an error occurs fetching the data.
+   */
+  public getTradeHistory = async (
+    productSymbol: ProductSymbol,
+    quantity: number = 10,
+  ): Promise<TradeHistoryReturnType> => {
+    try {
+      const { error, trades } = await this.#fetchFromAPI<TradeHistoryResponse>(
+        `trade-history?symbol=${productSymbol}&lookback=${quantity}&account=${this.account.address}&subAccountId=${this.subAccountId}`,
+      )
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          trades: [],
+        }
+      }
+
+      return { trades: trades || [] }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: UNKNOWN_ERROR },
+        trades: [],
       }
     }
   }

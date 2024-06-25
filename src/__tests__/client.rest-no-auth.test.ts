@@ -2,7 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import HundredXClient from 'src'
 import { Interval } from 'src/enums'
-import { klines, privateKey, productsData, tickers, ethOrderBook } from 'vitest/utils'
+import {
+  klines,
+  privateKey,
+  productsData,
+  tickers,
+  ethOrderBook,
+  mockTradeHistory,
+} from 'vitest/utils'
 
 describe('The HundredXClient REST', () => {
   beforeEach(() => {
@@ -650,6 +657,125 @@ describe('The HundredXClient REST', () => {
       expect(result).toEqual({
         error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
         required: 0n,
+      })
+    })
+  })
+
+  describe('trade history endpoint', () => {
+    it('should return trade history with just a symbol', async () => {
+      fetchMock.mockResponse(JSON.stringify(mockTradeHistory))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.getTradeHistory('ethperp')
+
+      expect(fetchMock.mock.calls[0][0]).toMatch(
+        /.+\/trade-history\?symbol=ethperp&lookback=10&account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&subAccountId=1$/,
+      )
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "trades": [
+            {
+              "createdAt": 1719304034692,
+              "makerAccount": "0x6efff71013eeb8ab151e847664f2b76fdbf096cd",
+              "makerFees": "0",
+              "makerID": "0x0b78249df1ef346cece15763c3c88232702c88505a850de236a847f0c33f16a6",
+              "makerSubaccountId": 0,
+              "price": "3356500000000000000000",
+              "quantity": "3890600000000000000",
+              "takerAccount": "0xb571978d4348ccb9950fe1963c81258d489de5ab",
+              "takerFees": "1305879890000000000",
+              "takerID": "0x5840b28f86da670fed0f76dcfee90dd7937d1c98669848ddf7ebdf8731d703f4",
+              "takerIsBuyer": true,
+              "takerSubaccountId": 0,
+              "uid": "a77fc690-a9a3-41ec-b457-afced3b87e39",
+            },
+            {
+              "createdAt": 1719304027570,
+              "makerAccount": "0x6efff71013eeb8ab151e847664f2b76fdbf096cd",
+              "makerFees": "0",
+              "makerID": "0x0b78249df1ef346cece15763c3c88232702c88505a850de236a847f0c33f16a6",
+              "makerSubaccountId": 0,
+              "price": "3356500000000000000000",
+              "quantity": "109400000000000000",
+              "takerAccount": "0xb4220fb0104dab7b818200094fd6e5e8eee91f8b",
+              "takerFees": "36720110000000000",
+              "takerID": "0xaf88e3fb829d1e8e223936c7b7a52c56979adb0367ee1133b308c98068db97b0",
+              "takerIsBuyer": true,
+              "takerSubaccountId": 0,
+              "uid": "14c46043-3b16-492a-ac42-9cdc459fad0c",
+            },
+            {
+              "createdAt": 1719296533167,
+              "makerAccount": "0x6efff71013eeb8ab151e847664f2b76fdbf096cd",
+              "makerFees": "0",
+              "makerID": "0xf9ef7a387966e73152eb91779437a730d9ed49af0b25fec855782803dbbb2ac0",
+              "makerSubaccountId": 0,
+              "price": "3370000000000000000000",
+              "quantity": "2228000000000000000",
+              "takerAccount": "0xb571978d4348ccb9950fe1963c81258d489de5ab",
+              "takerFees": "750836000000000000",
+              "takerID": "0x9e967c752ee9df26388e7dfd736820a2f82fdbc82cb8820de09de070ec8ea350",
+              "takerIsBuyer": false,
+              "takerSubaccountId": 0,
+              "uid": "8bb39aa9-3c00-411b-bbd8-613eb14b4721",
+            },
+          ],
+        }
+      `)
+    })
+
+    it('should return trade history with optional args passed', async () => {
+      fetchMock.mockResponse(JSON.stringify(mockTradeHistory))
+
+      const Client = new HundredXClient(privateKey)
+
+      await Client.getTradeHistory('ethperp', 1)
+
+      expect(fetchMock.mock.calls[0][0]).toMatch(
+        /.+\/trade-history\?symbol=ethperp&lookback=1&account=0xb47B0b1e44B932Ae9Bb01817E7010A553A965Ea8&subAccountId=1$/,
+      )
+    })
+
+    it('should return an empty array for trades if trades are null', async () => {
+      fetchMock.mockResponse(JSON.stringify({ success: true, trades: null }))
+
+      const Client = new HundredXClient(privateKey)
+
+      const response = await Client.getTradeHistory('ethperp')
+
+      expect(response).toMatchInlineSnapshot(`
+        {
+          "trades": [],
+        }
+      `)
+    })
+
+    it('should handle a known error', async () => {
+      fetchMock.mockResponse(JSON.stringify({ error: 'A known error occurred', success: false }))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.getTradeHistory('ethperp')
+
+      expect(result).toEqual({
+        error: {
+          message: 'A known error occurred',
+        },
+        trades: [],
+      })
+    })
+
+    it('should handle an unknown error', async () => {
+      fetchMock.mockReject(new Error('An unknown error occurred'))
+
+      const Client = new HundredXClient(privateKey)
+
+      const result = await Client.getTradeHistory('ethperp')
+
+      expect(result).toEqual({
+        error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
+        trades: [],
       })
     })
   })
