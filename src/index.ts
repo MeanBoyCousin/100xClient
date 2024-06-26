@@ -34,6 +34,8 @@ import type {
   ServerTimeReturnType,
   TickerResponse,
   TickerReturnType,
+  TradeHistoryResponse,
+  TradeHistoryReturnType,
   WithdrawReturnType,
 } from './types'
 import type { Logger } from 'pino'
@@ -58,6 +60,7 @@ import API_URL from './constants/api'
 import CHAINS from './constants/chains'
 import CIAO_ADDRESS from './constants/ciao'
 import MARGIN_ASSETS from './constants/marginAssets'
+import { UNKNOWN_ERROR } from './constants/messages'
 import { THIRTY_DAYS } from './constants/time'
 import VERIFIER_ADDRESS from './constants/verifier'
 import { Environment, Interval, MarginAssets, OrderType, TimeInForce } from './enums'
@@ -355,7 +358,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         required: BigInt(''),
       }
     }
@@ -388,7 +391,7 @@ class HundredXClient {
       return {
         asks: [],
         bids: [],
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
       }
     }
   }
@@ -449,7 +452,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         klines: [],
       }
     }
@@ -471,7 +474,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         products: [],
       }
     }
@@ -504,7 +507,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         product: {},
       }
     }
@@ -524,7 +527,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
       }
     }
   }
@@ -556,8 +559,45 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         tickers: {},
+      }
+    }
+  }
+
+  /**
+   * Get trade history for a product.
+   *
+   * {@link https://100x.readme.io/reference/trade-history}
+   *
+   * @param productSymbol The product symbol to get data for (btcperp, ethperp, etc.).
+   * @param [quantity] (Optional) The quantity of trades to fetch. Maximum value is 500. (default: 10).
+   * @returns A promise that resolves with an object containing the trade history data, or an error object.
+   * @throws {Error} Thrown if an error occurs fetching the data.
+   */
+  public getTradeHistory = async (
+    productSymbol: ProductSymbol,
+    quantity: number = 10,
+  ): Promise<TradeHistoryReturnType> => {
+    try {
+      const { error, trades } = await this.#fetchFromAPI<TradeHistoryResponse>(
+        `trade-history?symbol=${productSymbol}&lookback=${quantity}&account=${this.account.address}&subAccountId=${this.subAccountId}`,
+      )
+
+      if (error) {
+        this.#logger.error({ msg: error })
+        return {
+          error: { message: error },
+          trades: [],
+        }
+      }
+
+      return { trades: trades || [] }
+    } catch (error) {
+      this.#logger.debug({ err: error })
+      return {
+        error: { message: UNKNOWN_ERROR },
+        trades: [],
       }
     }
   }
@@ -643,7 +683,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         order: {},
       }
     }
@@ -687,7 +727,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
 
         success: false,
       }
@@ -735,7 +775,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         success: false,
       }
     }
@@ -832,7 +872,7 @@ class HundredXClient {
 
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         success: false,
       }
     }
@@ -888,7 +928,7 @@ class HundredXClient {
       this.#logger.debug({ err: error })
       return {
         balances: [],
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
       }
     }
   }
@@ -929,7 +969,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         orders: [],
       }
     }
@@ -971,7 +1011,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         positions: [],
       }
     }
@@ -1067,7 +1107,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         order: {},
       }
     }
@@ -1140,7 +1180,7 @@ class HundredXClient {
     } catch (error) {
       this.#logger.debug({ err: error })
       return {
-        error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+        error: { message: UNKNOWN_ERROR },
         success: false,
       }
     }

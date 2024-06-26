@@ -69,7 +69,7 @@ describe('The HundredXClient withdraw function', () => {
     const result = await Client.withdraw(100)
 
     expect(result).toEqual({
-      error: { message: 'An unknown error occurred. Try enabled debug mode for mode detail.' },
+      error: { message: 'An unknown error occurred. Try enabling debug mode for mode detail.' },
       success: false,
     })
   })

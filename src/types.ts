@@ -174,6 +174,26 @@ interface Ticker {
 }
 type TickerResponse = Ticker[]
 
+interface Trade {
+  createdAt: number
+  makerAccount: HexString
+  makerFees: bigint
+  makerID: HexString
+  makerSubaccountId: number
+  price: bigint
+  quantity: bigint
+  takerAccount: HexString
+  takerFees: bigint
+  takerID: HexString
+  takerIsBuyer: boolean
+  takerSubaccountId: number
+  uid: string
+}
+
+interface TradeHistoryResponse extends BaseApiResponse {
+  trades: Trade[] | null
+}
+
 // Method return types
 interface ErrorReturnType {
   error?: {
@@ -242,6 +262,10 @@ interface TickerReturnType extends ErrorReturnType {
   }
 }
 
+interface TradeHistoryReturnType extends ErrorReturnType {
+  trades: Trade[]
+}
+
 interface WithdrawReturnType extends ErrorReturnType {
   success: boolean
 }
@@ -284,5 +308,7 @@ export {
   type ServerTimeReturnType,
   type TickerResponse,
   type TickerReturnType,
+  type TradeHistoryResponse,
+  type TradeHistoryReturnType,
   type WithdrawReturnType,
 }
